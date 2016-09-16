@@ -37,12 +37,6 @@ NeoBundleLazy 'alpaca-tc/alpaca_tags', {
       \ }}
 call neobundle#end()
 
-" 補完の設定
-if !exists('g:neocomplete#force_omni_input_patterns')
-  let g:neocomplete#force_omni_input_patterns = {}
-endif
-let g:neocomplete#force_omni_input_patterns.ruby = '[^.*\t]\.\w*\|\h\w*::'
-
 let g:rsenseUseOmniFunc = 1
 
 let g:netrw_nogx = 1
