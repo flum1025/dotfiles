@@ -12,4 +12,6 @@ set listchars=tab:>.,trail:_,eol:↲,extends:>,precedes:<,nbsp:%
 set mouse=a
 set laststatus=2
 
+set whichwrap=b,s,h,l,<,>,[,]
+
 colorscheme onedark
