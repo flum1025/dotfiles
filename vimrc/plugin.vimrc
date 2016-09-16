@@ -20,6 +20,10 @@ NeoBundle 'Shougo/vimshell.vim'
 NeoBundle 'Shougo/vimproc'
 NeoBundle 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 NeoBundle 'tpope/vim-fugitive'
+NeoBundle 'open-browser.vim'
+let g:netrw_nogx = 1
+nmap gx <Plug>(openbrowser-smart-search)
+vmap gx <Plug>(openbrowser-smart-search)
 call neobundle#end()
 
 " 補完の設定
