@@ -1,5 +1,9 @@
 inoremap <silent> jj <Esc>
 noremap <F4> :!ruby %<CR>
+inoremap <C-s> <Esc>:w<CR>
+inoremap <C-d> <Esc>:w
+noremap <C-s> :w<CR>
+noremap <C-d> :w
 noremap <silent> sq :q<CR>
 noremap <silent> zzz :q!<CR>
 noremap <silent> vsh :VimShell<CR>
