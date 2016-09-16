@@ -3,6 +3,7 @@ noremap <F4> :!ruby %<CR>
 noremap <silent> sq :q<CR>
 noremap <silent> zzz :q!<CR>
 noremap <silent> vsh :VimShell<CR>
+noremap <silent> :fzf :FZF<CR>
 
 nnoremap s <Nop>
 nnoremap sj <C-w>j

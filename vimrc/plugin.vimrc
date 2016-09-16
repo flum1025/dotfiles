@@ -18,6 +18,8 @@ NeoBundleLazy 'supermomonga/neocomplete-rsense.vim', {
     \ 'autoload' : { 'insert' : 1, 'filetype' : 'ruby', } }
 NeoBundle 'Shougo/vimshell.vim'
 NeoBundle 'Shougo/vimproc'
+NeoBundle 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+NeoBundle 'tpope/vim-fugitive'
 call neobundle#end()
 
 " 補完の設定

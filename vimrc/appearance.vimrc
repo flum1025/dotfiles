@@ -13,5 +13,9 @@ set mouse=a
 set laststatus=2
 
 set whichwrap=b,s,h,l,<,>,[,]
+set noswapfile
+set nobackup
+set viminfo=
+set noundofile
 
 colorscheme onedark
