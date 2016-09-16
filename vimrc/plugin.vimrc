@@ -21,9 +21,6 @@ NeoBundle 'Shougo/vimproc'
 NeoBundle 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 NeoBundle 'tpope/vim-fugitive'
 NeoBundle 'open-browser.vim'
-let g:netrw_nogx = 1
-nmap gx <Plug>(openbrowser-smart-search)
-vmap gx <Plug>(openbrowser-smart-search)
 call neobundle#end()
 
 " 補完の設定
@@ -33,3 +30,5 @@ endif
 let g:neocomplete#force_omni_input_patterns.ruby = '[^.*\t]\.\w*\|\h\w*::'
 
 let g:rsenseUseOmniFunc = 1
+
+let g:netrw_nogx = 1

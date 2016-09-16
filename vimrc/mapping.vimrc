@@ -9,6 +9,9 @@ noremap <silent> zzz :q!<CR>
 noremap <silent> vsh :VimShell<CR>
 noremap <silent> :fzf :FZF<CR>
 
+nmap gx <Plug>(openbrowser-smart-search)
+vmap gx <Plug>(openbrowser-smart-search)
+
 nnoremap s <Nop>
 nnoremap sj <C-w>j
 nnoremap sk <C-w>k
