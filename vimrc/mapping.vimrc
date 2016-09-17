@@ -12,6 +12,8 @@ noremap <silent> :fzf :FZF<CR>
 nmap gx <Plug>(openbrowser-smart-search)
 vmap gx <Plug>(openbrowser-smart-search)
 
+noremap <F10> :<C-u>sp<CR>:e<Space>~/dotfiles/command<CR>
+
 nnoremap s <Nop>
 nnoremap sj <C-w>j
 nnoremap sk <C-w>k
