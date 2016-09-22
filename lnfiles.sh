@@ -9,6 +9,7 @@ git clone https://github.com/junegunn/fzf.git ~/.fzf
 ~/.fzf/install
 
 echo "alias tim='tmux new-session \; source-file ~/dotfiles/tmux/tim.conf'" >> ~/.bash_profile
+ln -s -i ~/dotfiles/tim/tim.app/ /Applications/
 
 mkdir -p ~/.tmux/plugins
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
