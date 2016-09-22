@@ -19,3 +19,5 @@ ln -s -i ~/dotfiles/tmux/.tmux.conf ~
 echo 'launch tmux and prefix+I'
 
 source ~/.bash_profile
+
+open ~/PowerlineSymbols-Powerline.otf
