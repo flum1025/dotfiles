@@ -8,6 +8,8 @@ git clone git://github.com/Shougo/neobundle.vim ~/.vim/bundle/neobundle.vim
 git clone https://github.com/junegunn/fzf.git ~/.fzf
 ~/.fzf/install
 
+gem install rsense
+
 echo "alias tim='tmux new-session \; source-file ~/dotfiles/tmux/tim.conf'" >> ~/.bash_profile
 ln -s -i ~/dotfiles/tim/tim.app/ /Applications/
 
