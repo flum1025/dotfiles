@@ -20,4 +20,4 @@ echo 'launch tmux and prefix+I'
 
 source ~/.bash_profile
 
-open ~/PowerlineSymbols-Powerline.otf
+open ~/dotfiles/PowerlineSymbols-Powerline.otf
