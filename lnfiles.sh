@@ -5,6 +5,11 @@ echo "alias vim='env_LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vi
 mkdir -p ~/.vim/bundle
 git clone git://github.com/Shougo/neobundle.vim ~/.vim/bundle/neobundle.vim
 
+git clone https://github.com/junegunn/fzf.git ~/.fzf
+~/.fzf/install
+
+echo "alias tim='tmux new-session \; source-file ~/dotfiles/tmux/tim.conf'"
+
 mkdir -p ~/.tmux/plugins
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 ln -s -i ~/dotfiles/tmux/.tmux.conf ~
