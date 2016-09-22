@@ -8,6 +8,7 @@
   <F4>      ruby実行
   vsh       vimShell起動
   :TagsGenerate!    tags作成
+  dir       NERDTree
 
 # Window
   # Split
@@ -43,3 +44,4 @@
     sT    タブ一覧
     sn    次のタブ
     sp    前のタブ
+    sd    新しいタブ＋NERDTree

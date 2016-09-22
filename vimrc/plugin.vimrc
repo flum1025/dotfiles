@@ -39,6 +39,8 @@ NeoBundle 'itchyny/lightline.vim'
 NeoBundle 'tpope/vim-fugitive'
 NeoBundle 'airblade/vim-gitgutter'
 NeoBundle 'kana/vim-submode'
+NeoBundle 'ConradIrwin/vim-bracketed-paste'
+NeoBundle 'tpope/vim-markdown'
 call neobundle#end()
 
 let g:rsenseUseOmniFunc = 1
