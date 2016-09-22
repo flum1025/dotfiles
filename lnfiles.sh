@@ -8,7 +8,7 @@ git clone git://github.com/Shougo/neobundle.vim ~/.vim/bundle/neobundle.vim
 git clone https://github.com/junegunn/fzf.git ~/.fzf
 ~/.fzf/install
 
-echo "alias tim='tmux new-session \; source-file ~/dotfiles/tmux/tim.conf'"
+echo "alias tim='tmux new-session \; source-file ~/dotfiles/tmux/tim.conf'" >> ~/.bash_profile
 
 mkdir -p ~/.tmux/plugins
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
