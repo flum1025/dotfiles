@@ -18,4 +18,7 @@ set nobackup
 set viminfo=
 set noundofile
 
+set splitbelow
+set splitright
+
 colorscheme onedark

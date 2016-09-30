@@ -10,6 +10,7 @@ noremap <silent> vsh :VimShell<CR>
 noremap <silent> :fzf :FZF<CR>
 noremap dir :NERDTree<CR>
 nnoremap sd :<C-u>tabnew<CR>:NERDTree<CR>
+noremap :jq :%!jq '.'<CR>
 
 nmap gx <Plug>(openbrowser-smart-search)
 vmap gx <Plug>(openbrowser-smart-search)
