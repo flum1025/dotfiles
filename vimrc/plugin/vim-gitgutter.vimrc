@@ -1,0 +1,2 @@
+NeoBundle 'airblade/vim-gitgutter'
+

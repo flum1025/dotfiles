@@ -1,19 +1,11 @@
 inoremap <silent> jj <Esc>
-noremap <F4> :!ruby %<CR>
 inoremap <C-s> <Esc>:w<CR>
 inoremap <C-d> <Esc>:w
 noremap <C-s> :w<CR>
 noremap <C-d> :w
 noremap <silent> sq :q<CR>
 noremap <silent> zzz :q!<CR>
-noremap <silent> vsh :VimShell<CR>
-noremap <silent> :fzf :FZF<CR>
-noremap dir :NERDTree<CR>
-nnoremap sd :<C-u>tabnew<CR>:NERDTree<CR>
 noremap :jq :%!jq '.'<CR>
-
-nmap gx <Plug>(openbrowser-smart-search)
-vmap gx <Plug>(openbrowser-smart-search)
 
 noremap <F10> :<C-u>sp<CR>:e<Space>~/dotfiles/command<CR>
 

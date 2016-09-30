@@ -1,0 +1,2 @@
+NeoBundle 'scrooloose/syntastic'
+
