@@ -1,3 +1,5 @@
+apt-get install vim-gnome
+
 ln -s -i ~/dotfiles/vimrc/.vimrc ~
 
 mkdir -p ~/.vim/bundle
