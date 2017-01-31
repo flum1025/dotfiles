@@ -28,5 +28,6 @@ call neobundle#begin(expand('~/.vim/bundle/'))
   source ~/dotfiles/vimrc/plugin/vim-bracketed-paste.vimrc
   source ~/dotfiles/vimrc/plugin/vim-markdown.vimrc
   source ~/dotfiles/vimrc/plugin/vim-quickrun.vimrc
+  source ~/dotfiles/vimrc/plugin/taglist.vimrc
 call neobundle#end()
 
