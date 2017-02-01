@@ -29,5 +29,6 @@ call neobundle#begin(expand('~/.vim/bundle/'))
   source ~/dotfiles/vimrc/plugin/vim-markdown.vimrc
   source ~/dotfiles/vimrc/plugin/vim-quickrun.vimrc
   source ~/dotfiles/vimrc/plugin/taglist.vimrc
+  source ~/dotfiles/vimrc/plugin/vim-ruby.vimrc
 call neobundle#end()
 
