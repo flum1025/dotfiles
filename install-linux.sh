@@ -1,6 +1,7 @@
 apt-get install vim-gnome
 
 ln -s -i ~/dotfiles/vimrc/.vimrc ~
+ln -s -i ~/dotfiles/vimrc/ftplugin/ ~/.vim/
 
 mkdir -p ~/.vim/bundle
 git clone git://github.com/Shougo/neobundle.vim ~/.vim/bundle/neobundle.vim

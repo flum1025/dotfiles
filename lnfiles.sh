@@ -1,4 +1,5 @@
 ln -s -i ~/dotfiles/vimrc/.vimrc ~
+ln -s -i ~/dotfiles/vimrc/ftplugin/ ~/.vim/
 echo "alias vi='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim \"\$@\"'" >> ~/.bash_profile
 echo "alias vim='env_LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim \"\$@\"'" >> ~/.bash_profile
 
