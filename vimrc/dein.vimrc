@@ -1,4 +1,9 @@
-let s:dein_dir = expand('~/.cache/dein')
+if has('nvim')
+  let s:dein_dir = expand('~/.cache/nvim/dein')
+else
+  let s:dein_dir = expand('~/.cache/vim/dein')
+endif
+
 let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
 
 " dein.vim がなければgithub から落としてくる
