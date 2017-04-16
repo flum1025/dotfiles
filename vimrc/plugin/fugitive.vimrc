@@ -1,2 +1,0 @@
-NeoBundle 'tpope/vim-fugitive'
-

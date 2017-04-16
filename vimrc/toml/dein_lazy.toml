@@ -58,9 +58,62 @@ repo = 'Konfekt/FastFold'
 repo = 'thinca/vim-ref'
 
 [[plugins]]
+repo = 'yuku-t/vim-ref-ri'
+
+[[plugins]]
 repo = 'osyo-manga/unite-filetype'
 depends = 'unite.vim'
 
 [[plugins]]
 repo = 'sudo.vim'
+
+[[plugins]]
+repo = 'kana/vim-submode'
+hook_post_source = '''
+  call submode#enter_with('bufmove', 'n', '', 's>', '<C-w>>')
+  call submode#enter_with('bufmove', 'n', '', 's<', '<C-w><')
+  call submode#enter_with('bufmove', 'n', '', 's+', '<C-w>+')
+  call submode#enter_with('bufmove', 'n', '', 's-', '<C-w>-')
+  call submode#map('bufmove', 'n', '', '>', '<C-w>>')
+  call submode#map('bufmove', 'n', '', '<', '<C-w><')
+  call submode#map('bufmove', 'n', '', '+', '<C-w>+')
+  call submode#map('bufmove', 'n', '', '-', '<C-w>-')
+'''
+
+[[plugins]]
+repo = 'Shougo/vimshell.vim'
+
+[[plugins]]
+repo = 'alpaca-tc/alpaca_tags'
+depends = 'vimproc.vim'
+on_cmd = [
+  'AlpacaTagsBundle', 'AlpacaTagsUpdate', 'AlpacaTagsSet', 'AlpacaTagsCleanCache', 'AlpacaTagsEnable', 'AlpacaTagsDisable', 'AlpacaTagsKillProcess', 'AlpacaTagsProcessStatus'
+]
+
+[[plugins]]
+repo = 'thinca/vim-quickrun'
+
+[[plugins]]
+repo = 'airblade/vim-gitgutter'
+
+[[plugins]]
+repo = 'ConradIrwin/vim-bracketed-paste'
+
+[[plugins]]
+repo = 'vim-scripts/taglist.vim'
+
+[[plugins]]
+repo = 'scrooloose/syntastic'
+
+[[plugins]]
+repo = 'open-browser.vim'
+
+[[plugins]]
+repo = 'junegunn/fzf'
+hook_post_update = '''
+  if !isdirectory(expand('~/.fzf'))
+    execute '!git clone https://github.com/junegunn/fzf.git ~/.fzf'
+    execute '!~/.fzf/install --all'
+  endif
+'''
 
