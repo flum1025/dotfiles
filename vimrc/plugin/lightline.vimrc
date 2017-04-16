@@ -1,5 +1,3 @@
-NeoBundle 'itchyny/lightline.vim'
-
 " ghtline.vim
 let g:lightline = {
         \ 'mode_map': {'c': 'NORMAL'},

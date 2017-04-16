@@ -1,2 +1,0 @@
-NeoBundle 'Shougo/vimproc'
-

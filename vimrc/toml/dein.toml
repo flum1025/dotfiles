@@ -16,3 +16,9 @@ repo = 'itchyny/lightline.vim'
 
 [[plugins]]
 repo = 'Yggdroot/indentLine'
+
+[[plugins]]
+repo = 'szw/vim-tags'
+
+[[plugins]]
+repo = 'NigoroJr/rsense'
