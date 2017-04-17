@@ -15,7 +15,7 @@ setopt hist_ignore_dups #直前と同じコマンドはヒストリに追加し�
 # The following lines were added by compinstall
 
 autoload -Uz compinit
-compinit
+compinit -C
 
 #
 # setopt
