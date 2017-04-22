@@ -14,8 +14,6 @@ if &runtimepath !~# '/dein.vim'
   execute 'set runtimepath^=' . fnamemodify(s:dein_repo_dir, ':p')
 endif
 
-call dein#begin(s:dein_dir)
-
 let s:toml      = '~/dotfiles/vimrc/toml/dein.toml'
 let s:lazy_toml = '~/dotfiles/vimrc/toml/dein_lazy.toml'
 let s:syntax_toml = '~/dotfiles/vimrc/toml/dein_syntax.toml'

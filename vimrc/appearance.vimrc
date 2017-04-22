@@ -21,4 +21,7 @@ set noundofile
 set splitbelow
 set splitright
 
+set incsearch
+set hlsearch
+
 colorscheme onedark
