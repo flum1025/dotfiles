@@ -9,6 +9,8 @@ SAVEHIST=1000
 setopt extended_history #ヒストリに実行時間も保存
 setopt hist_ignore_dups #直前と同じコマンドはヒストリに追加しない
 
+setopt nonomatch #勝手ファイル名として解析されるのを防ぐ
+
 # vi ライクな操作ができる
 # bindkey -v
 # End of lines configured by zsh-newuser-install
