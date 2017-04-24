@@ -22,3 +22,16 @@ repo = 'szw/vim-tags'
 
 [[plugins]]
 repo = 'NigoroJr/rsense'
+
+[[plugins]]
+repo = 'kana/vim-submode'
+hook_post_source = '''
+  call submode#enter_with('bufmove', 'n', '', 's>', '<C-w>>')
+  call submode#enter_with('bufmove', 'n', '', 's<', '<C-w><')
+  call submode#enter_with('bufmove', 'n', '', 's+', '<C-w>+')
+  call submode#enter_with('bufmove', 'n', '', 's-', '<C-w>-')
+  call submode#map('bufmove', 'n', '', '>', '<C-w>>')
+  call submode#map('bufmove', 'n', '', '<', '<C-w><')
+  call submode#map('bufmove', 'n', '', '+', '<C-w>+')
+  call submode#map('bufmove', 'n', '', '-', '<C-w>-')
+'''
