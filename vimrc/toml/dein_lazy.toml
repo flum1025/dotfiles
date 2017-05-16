@@ -104,3 +104,5 @@ hook_post_update = '''
   endif
 '''
 
+[[plugins]]
+repo = 'glidenote/memolist.vim'
