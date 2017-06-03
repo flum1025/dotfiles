@@ -10,6 +10,7 @@ set backspace=2
 set list
 set listchars=tab:>.,trail:_,eol:↲,extends:>,precedes:<,nbsp:%
 set mouse=a
+set ttymouse=sgr
 set laststatus=2
 
 set whichwrap=b,s,h,l,<,>,[,]
