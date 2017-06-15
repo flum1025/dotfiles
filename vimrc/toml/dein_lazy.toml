@@ -65,7 +65,7 @@ repo = 'osyo-manga/unite-filetype'
 depends = 'unite.vim'
 
 [[plugins]]
-repo = 'sudo.vim'
+repo = 'vim-scripts/sudo.vim'
 
 [[plugins]]
 repo = 'Shougo/vimshell.vim'
@@ -93,7 +93,7 @@ repo = 'vim-scripts/taglist.vim'
 repo = 'scrooloose/syntastic'
 
 [[plugins]]
-repo = 'open-browser.vim'
+repo = 'vim-scripts/open-browser.vim'
 
 [[plugins]]
 repo = 'junegunn/fzf'
