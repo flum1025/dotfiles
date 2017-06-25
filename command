@@ -9,6 +9,8 @@
   vsh       vimShell起動
   :TagsGenerate!    tags作成
   dir       NERDTree
+  g,e       grep
+  g,re      再帰Grep
 
 # Window
   # Split

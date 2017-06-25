@@ -112,3 +112,6 @@ repo = 'vim-scripts/SQLUtilities'
 
 [[plugins]]
 repo = 'vim-scripts/Align'
+
+[[plugins]]
+repo = 'fuenor/qfixgrep'
