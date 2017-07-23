@@ -11,6 +11,7 @@
   dir       NERDTree
   g,e       grep
   g,re      再帰Grep
+  viw       単語選択
 
 # Window
   # Split
