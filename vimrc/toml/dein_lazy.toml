@@ -115,3 +115,12 @@ repo = 'vim-scripts/Align'
 
 [[plugins]]
 repo = 'fuenor/qfixgrep'
+
+[[plugins]]
+repo = 'vim-scripts/closetag.vim'
+
+[[plugins]]
+repo = 'alvan/vim-closetag'
+
+[[plugins]]
+repo = 'LeafCage/yankround.vim'

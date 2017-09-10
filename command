@@ -12,6 +12,14 @@
   g,e       grep
   g,re      再帰Grep
   viw       単語選択
+  ctrl+__   コメントアウト
+
+# HTML
+  cit       <div>text</div> => <div></div>
+  S         こんにちは ← vで選択後にS<div>と入力 => <div>こんにちは</div> 
+  dst       <div>こんにちは</div> ← dstと入力 => こんにちは
+  cst       <div>こんにちは</div> ← cst<span>と入力 => <span>こんにちは</span>
+
 
 # Window
   # Split
