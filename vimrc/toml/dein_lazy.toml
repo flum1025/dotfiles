@@ -124,3 +124,6 @@ repo = 'alvan/vim-closetag'
 
 [[plugins]]
 repo = 'LeafCage/yankround.vim'
+
+[[plugins]]
+repo = 'mattn/emmet-vim'
