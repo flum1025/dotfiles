@@ -24,7 +24,7 @@ for Linux
 
 ## Getting Started
 
-    $ #curl -fsSL https://raw.githubusercontent.com/flum1025/dotfiles/master/qinstall.sh | sh
+    $ curl -fsSL https://raw.githubusercontent.com/flum1025/dotfiles/master/qinstall.sh | sh
 
 ## Deprecation
 
