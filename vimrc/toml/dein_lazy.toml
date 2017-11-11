@@ -1,21 +1,4 @@
 [[plugins]]
-repo = 'Shougo/neomru.vim'
-on_path = '.*'
-
-[[plugins]]
-repo = 'Shougo/unite.vim'
-depends = 'neomru.vim'
-
-[[plugins]]
-repo = 'Shougo/context_filetype.vim'
-
-[[plugins]]
-repo = 'Shougo/neocomplete.vim'
-depends = 'context_filetype.vim'
-disabled = '!has("lua")'
-on_i = 1
-
-[[plugins]]
 repo = 'Shougo/neopairs.vim'
 on_i = 1
 
@@ -27,14 +10,8 @@ on_path = '.*'
 repo = 'tpope/vim-endwise'
 on_ft = 'ruby'
 
-[[plugins]]
-repo = 'tpope/vim-fugitive' 
-
-[[plugins]]
-repo = 'vim-scripts/AnsiEsc.vim'
-
-[[plugins]]
-repo = 'AndrewRadev/switch.vim'
+# [[plugins]]
+# repo = 'AndrewRadev/switch.vim'
 
 [[plugins]]
 repo = 'tomtom/tcomment_vim'
@@ -46,6 +23,7 @@ repo = 'tpope/vim-surround'
 repo = 'basyura/unite-rails'
 depends = 'unite.vim'
 on_source = 'unite.vim'
+on_ft = 'ruby'
 
 [[plugins]]
 repo = 'osyo-manga/vim-monster'
@@ -59,10 +37,7 @@ repo = 'thinca/vim-ref'
 
 [[plugins]]
 repo = 'yuku-t/vim-ref-ri'
-
-[[plugins]]
-repo = 'osyo-manga/unite-filetype'
-depends = 'unite.vim'
+on_ft = 'ruby'
 
 [[plugins]]
 repo = 'vim-scripts/sudo.vim'
@@ -109,21 +84,29 @@ repo = 'glidenote/memolist.vim'
 
 [[plugins]]
 repo = 'vim-scripts/SQLUtilities'
+on_ft = 'sql'
 
 [[plugins]]
 repo = 'vim-scripts/Align'
+on_cmd = ['Align']
 
 [[plugins]]
 repo = 'fuenor/qfixgrep'
 
-[[plugins]]
-repo = 'vim-scripts/closetag.vim'
+# [[plugins]]
+# repo = 'vim-scripts/closetag.vim'
 
 [[plugins]]
 repo = 'alvan/vim-closetag'
+on_ft = 'html'
 
 [[plugins]]
 repo = 'LeafCage/yankround.vim'
 
 [[plugins]]
 repo = 'mattn/emmet-vim'
+on_ft = 'html'
+
+[[plugins]]
+repo = 'NigoroJr/rsense'
+on_ft = 'ruby'

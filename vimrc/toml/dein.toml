@@ -21,7 +21,31 @@ repo = 'Yggdroot/indentLine'
 repo = 'szw/vim-tags'
 
 [[plugins]]
-repo = 'NigoroJr/rsense'
+repo = 'kana/vim-submode'
 
 [[plugins]]
-repo = 'kana/vim-submode'
+repo = 'tpope/vim-fugitive' 
+
+[[plugins]]
+repo = 'vim-scripts/AnsiEsc.vim'
+
+[[plugins]]
+repo = 'Shougo/neomru.vim'
+on_path = '.*'
+
+[[plugins]]
+repo = 'Shougo/unite.vim'
+depends = 'neomru.vim'
+
+[[plugins]]
+repo = 'osyo-manga/unite-filetype'
+depends = 'unite.vim'
+
+[[plugins]]
+repo = 'Shougo/context_filetype.vim'
+
+[[plugins]]
+repo = 'Shougo/neocomplete.vim'
+depends = 'context_filetype.vim'
+disabled = '!has("lua")'
+on_i = 1
