@@ -6,6 +6,12 @@ noremap <C-d> :w
 noremap <silent> sq :q<CR>
 noremap <silent> zzz :q!<CR>
 noremap :jq :%!jq '.'<CR>
+" Shift-Left
+noremap ;2D <Esc>b
+" Shift-Right
+noremap ;2C <Esc>w
+" ^[f
+noremap <Esc>f <Esc>w
 
 noremap <F10> :<C-u>sp<CR>:e<Space>~/dotfiles/command<CR>
 
