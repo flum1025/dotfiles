@@ -15,6 +15,3 @@ au BufRead,BufNewFile *.ejs set ft=html
 
 " vue
 au BufRead,BufNewFile *.vue set ft=html
-
-" php
-au BufRead,BufNewFile *.php set ft=html shiftwidth=4
