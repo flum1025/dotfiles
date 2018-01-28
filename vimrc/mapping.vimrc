@@ -14,6 +14,7 @@ noremap ;2C <Esc>w
 noremap <Esc>f <Esc>w
 
 noremap <F10> :<C-u>sp<CR>:e<Space>~/dotfiles/command<CR>
+noremap :temp :r ~/dotfiles/vimrc/template/vue<CR>:0<CR>:d
 
 nnoremap s <Nop>
 nnoremap sj <C-w>j
