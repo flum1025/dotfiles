@@ -42,6 +42,3 @@ nnoremap sq :<C-u>q<CR>
 nnoremap sQ :<C-u>bd<CR>
 nnoremap sb :<C-u>Unite buffer_tab -buffer-name=file<CR>
 nnoremap sB :<C-u>Unite buffer -buffer-name=file<CR>
-
-" 保存時にsudo権限で無理やり保存
-"cnoremap w!! w !sudo tee > /dev/null %<CR>

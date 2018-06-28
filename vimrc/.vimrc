@@ -4,9 +4,6 @@ source ~/dotfiles/vimrc/dein.vimrc
 " 基本設定
 source ~/dotfiles/vimrc/basic.vimrc
 
-" 表示設定
-source ~/dotfiles/vimrc/appearance.vimrc
-
 " キーマッピング設定
 source ~/dotfiles/vimrc/mapping.vimrc
 
