@@ -81,6 +81,12 @@ repo = 'vim-scripts/taglist.vim'
 repo = 'osyo-manga/vim-over'
 
 [[plugins]]
+repo = 'osyo-manga/vim-precious'
+
+[[plugins]]
+repo = 'easymotion/vim-easymotion'
+
+[[plugins]]
 repo = 'junegunn/fzf'
 hook_post_update = '''
   if !isdirectory(expand('~/.fzf'))
