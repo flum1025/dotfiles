@@ -2,11 +2,8 @@
 
 ## Dependencies
 
-You should install following applications.
-
-for MacOS
-
-- [MacVim-KaoriYa](https://github.com/splhack/macvim-kaoriya)
+for mac 
+- brew
 
 for Linux
 
@@ -18,7 +15,7 @@ for Linux
 - `bash`
 - `zsh`
 - `tmux`
-- `vim`
+- `vim 8.0+`
 - `nvim`
 - `iterm`
 

@@ -24,28 +24,77 @@ repo = 'szw/vim-tags'
 repo = 'kana/vim-submode'
 
 [[plugins]]
-repo = 'tpope/vim-fugitive' 
+repo = 'tpope/vim-fugitive'
+
+[[plugins]]
+repo = 'airblade/vim-gitgutter'
 
 [[plugins]]
 repo = 'vim-scripts/AnsiEsc.vim'
 
 [[plugins]]
-repo = 'Shougo/neomru.vim'
-on_path = '.*'
-
-[[plugins]]
-repo = 'Shougo/unite.vim'
-depends = 'neomru.vim'
-
-[[plugins]]
-repo = 'osyo-manga/unite-filetype'
-depends = 'unite.vim'
-
-[[plugins]]
 repo = 'Shougo/context_filetype.vim'
 
 [[plugins]]
-repo = 'Shougo/neocomplete.vim'
-depends = 'context_filetype.vim'
-disabled = '!has("lua")'
-on_i = 1
+repo = 'fuenor/qfixgrep'
+
+[[plugins]]
+repo = 'LeafCage/yankround.vim'
+
+[[plugins]]
+repo = 'glidenote/memolist.vim'
+
+[[plugins]]
+repo = 'tomtom/tcomment_vim'
+
+[[plugins]]
+repo = 'tpope/vim-surround'
+
+[[plugins]]
+repo = 'Konfekt/FastFold'
+
+[[plugins]]
+repo = 'vim-scripts/open-browser.vim'
+
+[[plugins]]
+repo = 'ConradIrwin/vim-bracketed-paste'
+
+[[plugins]]
+repo = 'vim-scripts/sudo.vim'
+
+[[plugins]]
+repo = 'thinca/vim-quickrun'
+
+[[plugins]]
+repo = 'Shougo/vimshell.vim'
+
+[[plugins]] # or http://dackdive.hateblo.jp/entry/2016/10/24/095000
+repo = 'scrooloose/syntastic'
+
+[[plugins]]
+repo = 'thinca/vim-ref'
+
+[[plugins]]
+repo = 'vim-scripts/taglist.vim'
+
+[[plugins]]
+repo = 'osyo-manga/vim-over'
+
+[[plugins]]
+repo = 'junegunn/fzf'
+hook_post_update = '''
+  if !isdirectory(expand('~/.fzf'))
+    execute '!git clone https://github.com/junegunn/fzf.git ~/.fzf'
+    execute '!~/.fzf/install --all'
+  endif
+'''
+
+[[plugins]] # Deprecated
+repo = 'Shougo/unite.vim'
+depends = 'neomru.vim'
+if = '!has("nvim")'
+
+[[plugins]]
+repo = 'Shougo/denite.nvim'
+depends = 'neomru.vim'
+if = 'has("nvim")'

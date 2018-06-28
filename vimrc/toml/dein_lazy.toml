@@ -1,49 +1,35 @@
 [[plugins]]
-repo = 'Shougo/neopairs.vim'
+repo = 'Shougo/neomru.vim'
+on_path = '.*'
+
+[[plugins]] # Deprecated
+repo = 'Shougo/neocomplete.vim'
+depends = 'context_filetype.vim'
+if = 'has("lua")'
 on_i = 1
 
 [[plugins]]
-repo = 'Townk/vim-autoclose'
-on_path = '.*'
+repo = 'Shougo/deoplete.nvim'
+if = 'has("nvim")'
+on_i = 1
 
 [[plugins]]
-repo = 'tpope/vim-endwise'
-on_ft = 'ruby'
-
-# [[plugins]]
-# repo = 'AndrewRadev/switch.vim'
+repo = 'Shougo/neosnippet'
+depends = 'deoplete.nvim'
+on_i = 1
 
 [[plugins]]
-repo = 'tomtom/tcomment_vim'
+repo = 'Shougo/neosnippet-snippets'
+depends = 'neosnippet'
+on_i = 1
 
 [[plugins]]
-repo = 'tpope/vim-surround'
+repo = 'cohama/lexima.vim'
+on_i = 1
 
 [[plugins]]
-repo = 'basyura/unite-rails'
-depends = 'unite.vim'
-on_source = 'unite.vim'
-on_ft = 'ruby'
-
-[[plugins]]
-repo = 'osyo-manga/vim-monster'
-on_ft = 'ruby'
-
-[[plugins]]
-repo = 'Konfekt/FastFold'
-
-[[plugins]]
-repo = 'thinca/vim-ref'
-
-[[plugins]]
-repo = 'yuku-t/vim-ref-ri'
-on_ft = 'ruby'
-
-[[plugins]]
-repo = 'vim-scripts/sudo.vim'
-
-[[plugins]]
-repo = 'Shougo/vimshell.vim'
+repo = 'AndrewRadev/switch.vim'
+on_i = 1
 
 [[plugins]]
 repo = 'alpaca-tc/alpaca_tags'
@@ -53,60 +39,31 @@ on_cmd = [
 ]
 
 [[plugins]]
-repo = 'thinca/vim-quickrun'
-
-[[plugins]]
-repo = 'airblade/vim-gitgutter'
-
-[[plugins]]
-repo = 'ConradIrwin/vim-bracketed-paste'
-
-[[plugins]]
-repo = 'vim-scripts/taglist.vim'
-
-[[plugins]]
-repo = 'scrooloose/syntastic'
-
-[[plugins]]
-repo = 'vim-scripts/open-browser.vim'
-
-[[plugins]]
-repo = 'junegunn/fzf'
-hook_post_update = '''
-  if !isdirectory(expand('~/.fzf'))
-    execute '!git clone https://github.com/junegunn/fzf.git ~/.fzf'
-    execute '!~/.fzf/install --all'
-  endif
-'''
-
-[[plugins]]
-repo = 'glidenote/memolist.vim'
-
-[[plugins]]
-repo = 'vim-scripts/SQLUtilities'
-on_ft = 'sql'
-
-[[plugins]]
 repo = 'vim-scripts/Align'
 on_cmd = ['Align']
 
-[[plugins]]
-repo = 'fuenor/qfixgrep'
-
-# [[plugins]]
-# repo = 'vim-scripts/closetag.vim'
+# For Language
 
 [[plugins]]
 repo = 'alvan/vim-closetag'
 on_ft = 'html'
 
 [[plugins]]
-repo = 'LeafCage/yankround.vim'
-
-[[plugins]]
 repo = 'mattn/emmet-vim'
 on_ft = 'html'
 
 [[plugins]]
-repo = 'NigoroJr/rsense'
+repo = 'wokalski/autocomplete-flow'
+on_ft = 'javascript'
+
+[[plugins]]
+repo = 'yuku-t/vim-ref-ri'
 on_ft = 'ruby'
+
+[[plugins]]
+repo = 'osyo-manga/vim-monster'
+on_ft = 'ruby'
+
+[[plugins]]
+repo = 'vim-scripts/SQLUtilities'
+on_ft = 'sql'
