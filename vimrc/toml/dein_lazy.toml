@@ -62,7 +62,11 @@ on_ft = 'ruby'
 
 [[plugins]]
 repo = 'osyo-manga/vim-monster'
+depends = 'deoplete.nvim'
 on_ft = 'ruby'
+hook_post_update = '''
+  execute '!gem install rcodetools'
+'''
 
 [[plugins]]
 repo = 'vim-scripts/SQLUtilities'
