@@ -36,6 +36,7 @@ repo = 'Shougo/neosnippet'
 depends = 'deoplete.nvim'
 on_i = 1
 hook_add = '''
+  let g:neosnippet#snippets_directory = '~/dotfiles/vimrc/snippets/'
   imap <C-k> <Plug>(neosnippet_expand_or_jump)
   smap <C-k> <Plug>(neosnippet_expand_or_jump)
   xmap <C-k> <Plug>(neosnippet_expand_target)

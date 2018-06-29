@@ -143,7 +143,7 @@ hook_add = '''
 
 [[plugins]] # or http://dackdive.hateblo.jp/entry/2016/10/24/095000
 repo = 'scrooloose/syntastic'
-hook_add = '''
+hook_source = '''
   set statusline+=%#warningmsg#
   set statusline+=%{SyntasticStatuslineFlag()}
   set statusline+=%*
