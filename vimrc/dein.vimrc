@@ -14,6 +14,12 @@ if &runtimepath !~# '/dein.vim'
   execute 'set runtimepath^=' . fnamemodify(s:dein_repo_dir, ':p')
 endif
 
+" function for hook
+let s:plugin_dir = '~/dotfiles/vimrc/plugin/'
+function! RequirePlugin(path)
+  execute "source" s:plugin_dir . a:path
+endfunction
+
 let s:toml      = '~/dotfiles/vimrc/toml/dein.toml'
 let s:lazy_toml = '~/dotfiles/vimrc/toml/dein_lazy.toml'
 let s:syntax_toml = '~/dotfiles/vimrc/toml/dein_syntax.toml'
