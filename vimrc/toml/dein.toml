@@ -99,16 +99,15 @@ repo = 'tomtom/tcomment_vim'
 [[plugins]]
 repo = 'tpope/vim-surround'
 
-# TODO 折りたたみが遅くなったら有効に
-# [[plugins]] 
-# repo = 'Konfekt/FastFold'
-# hook_source = '''
-#   let g:tex_fold_enabled=1
-#   let g:vimsyn_folding='af'
-#   let g:xml_syntax_folding = 1
-#   let g:php_folding = 1
-#   let g:perl_fold = 1
-# '''
+[[plugins]]
+repo = 'Konfekt/FastFold'
+hook_source = '''
+  let g:tex_fold_enabled=1
+  let g:vimsyn_folding='af'
+  let g:xml_syntax_folding = 1
+  let g:php_folding = 1
+  let g:perl_fold = 1
+'''
 
 [[plugins]]
 repo = 'vim-scripts/open-browser.vim'
@@ -173,6 +172,15 @@ repo = 'osyo-manga/vim-over'
 
 [[plugins]]
 repo = 'osyo-manga/vim-precious'
+hook_add = '''
+  let g:precious_enable_switch_CursorMoved = { '*': 0, 'help': 1 }
+  augroup MyAutoCmd
+    autocmd!
+    " Toggle on insert
+    autocmd InsertEnter * :PreciousSwitch
+    autocmd InsertLeave * :PreciousReset
+  augroup END
+'''
 
 [[plugins]]
 repo = 'easymotion/vim-easymotion'
