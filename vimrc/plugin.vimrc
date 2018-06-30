@@ -1,9 +1,3 @@
-let filelist =  expand("~/dotfiles/vimrc/plugin/*.vimrc")
-let splitted = split(filelist, "\n")
-for file in splitted
-  execute "source" file
-endfor
-
 augroup vimrc-local
   autocmd!
   autocmd BufNewFile,BufReadPost * call s:vimrc_local(expand('<afile>:p:h'))

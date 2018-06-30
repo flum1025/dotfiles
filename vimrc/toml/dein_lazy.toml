@@ -1,49 +1,66 @@
 [[plugins]]
-repo = 'Shougo/neopairs.vim'
+repo = 'Shougo/neomru.vim'
+on_path = '.*'
+
+[[plugins]] # Deprecated
+repo = 'Shougo/neocomplete.vim'
+depends = 'context_filetype.vim'
+if = 'has("lua")'
+on_i = 1
+hook_add = '''
+  call RequirePlugin('neocomplete.vimrc')
+'''
+
+[[plugins]]
+repo = 'Shougo/deoplete.nvim'
+if = 'has("nvim")'
+on_i = 1
+hook_add = '''
+  let g:deoplete#enable_at_startup = 1
+  let g:deoplete#enable_ignore_case = 1
+  let g:deoplete#enable_smart_case = 1
+
+  " <TAB>: completion.
+  imap <silent><expr> <TAB> pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<TAB>" : deoplete#mappings#manual_complete()
+  function! s:check_back_space() abort
+    let col = col('.') - 1
+    return !col || getline('.')[col - 1]  =~ '\s'
+  endfunction
+
+  " <S-TAB>: completion back.
+  inoremap <expr><S-TAB>  pumvisible() ? "\<C-p>" : "\<C-h>"
+'''
+
+[[plugins]]
+repo = 'Shougo/neosnippet'
+depends = 'deoplete.nvim'
+on_i = 1
+hook_add = '''
+  let g:neosnippet#snippets_directory = '~/dotfiles/vimrc/snippets/'
+  imap <C-k> <Plug>(neosnippet_expand_or_jump)
+  smap <C-k> <Plug>(neosnippet_expand_or_jump)
+  xmap <C-k> <Plug>(neosnippet_expand_target)
+
+  if has('conceal')
+    set conceallevel=2 concealcursor=i
+  endif
+'''
+
+[[plugins]]
+repo = 'Shougo/neosnippet-snippets'
+depends = 'neosnippet'
 on_i = 1
 
 [[plugins]]
-repo = 'Townk/vim-autoclose'
-on_path = '.*'
+repo = 'cohama/lexima.vim'
+on_i = 1
 
 [[plugins]]
-repo = 'tpope/vim-endwise'
-on_ft = 'ruby'
-
-# [[plugins]]
-# repo = 'AndrewRadev/switch.vim'
-
-[[plugins]]
-repo = 'tomtom/tcomment_vim'
-
-[[plugins]]
-repo = 'tpope/vim-surround'
-
-[[plugins]]
-repo = 'basyura/unite-rails'
-depends = 'unite.vim'
-on_source = 'unite.vim'
-on_ft = 'ruby'
-
-[[plugins]]
-repo = 'osyo-manga/vim-monster'
-on_ft = 'ruby'
-
-[[plugins]]
-repo = 'Konfekt/FastFold'
-
-[[plugins]]
-repo = 'thinca/vim-ref'
-
-[[plugins]]
-repo = 'yuku-t/vim-ref-ri'
-on_ft = 'ruby'
-
-[[plugins]]
-repo = 'vim-scripts/sudo.vim'
-
-[[plugins]]
-repo = 'Shougo/vimshell.vim'
+repo = 'AndrewRadev/switch.vim'
+on_i = 1
+hook_add = '''
+  let g:switch_mapping = "-"
+'''
 
 [[plugins]]
 repo = 'alpaca-tc/alpaca_tags'
@@ -53,60 +70,69 @@ on_cmd = [
 ]
 
 [[plugins]]
-repo = 'thinca/vim-quickrun'
-
-[[plugins]]
-repo = 'airblade/vim-gitgutter'
-
-[[plugins]]
-repo = 'ConradIrwin/vim-bracketed-paste'
-
-[[plugins]]
-repo = 'vim-scripts/taglist.vim'
-
-[[plugins]]
-repo = 'scrooloose/syntastic'
-
-[[plugins]]
-repo = 'vim-scripts/open-browser.vim'
-
-[[plugins]]
-repo = 'junegunn/fzf'
-hook_post_update = '''
-  if !isdirectory(expand('~/.fzf'))
-    execute '!git clone https://github.com/junegunn/fzf.git ~/.fzf'
-    execute '!~/.fzf/install --all'
-  endif
-'''
-
-[[plugins]]
-repo = 'glidenote/memolist.vim'
-
-[[plugins]]
-repo = 'vim-scripts/SQLUtilities'
-on_ft = 'sql'
-
-[[plugins]]
 repo = 'vim-scripts/Align'
 on_cmd = ['Align']
 
-[[plugins]]
-repo = 'fuenor/qfixgrep'
-
-# [[plugins]]
-# repo = 'vim-scripts/closetag.vim'
+# For Language
 
 [[plugins]]
 repo = 'alvan/vim-closetag'
 on_ft = 'html'
+hook_add = '''
+  " filenames like *.xml, *.html, *.xhtml, ...
+  " Then after you press <kbd>&gt;</kbd> in these files, this plugin will try to close the current tag.
+  "
+  let g:closetag_filenames = '*.html,*.xhtml,*.phtml,*.ejs,*.vue'
 
-[[plugins]]
-repo = 'LeafCage/yankround.vim'
+  " filenames like *.xml, *.xhtml, ...
+  " This will make the list of non closing tags self closing in the specified files.
+  "
+  let g:closetag_xhtml_filenames = '*.xhtml,*.jsx'
+
+  " integer value [0|1]
+  " This will make the list of non closing tags case sensitive (e.g. `<Link>` will be closed while `<link>` won't.)
+  "
+  let g:closetag_emptyTags_caseSensitive = 1
+
+  " Shortcut for closing tags, default is '>'
+  "
+  let g:closetag_shortcut = '>'
+
+  " Add > at current position without closing the current tag, default is '<leader>>'
+  "
+  let g:closetag_close_shortcut = '<leader>>'
+'''
 
 [[plugins]]
 repo = 'mattn/emmet-vim'
 on_ft = 'html'
 
 [[plugins]]
-repo = 'NigoroJr/rsense'
+repo = 'yuku-t/vim-ref-ri'
 on_ft = 'ruby'
+
+[[plugins]]
+repo = 'osyo-manga/vim-monster'
+depends = 'deoplete.nvim'
+on_ft = 'ruby'
+hook_post_update = '''
+  execute '!gem install rcodetools'
+'''
+hook_add = '''
+  " Set async completion.
+  " let g:monster#completion#rcodetools#backend = "async_rct_complete"
+
+  " Use deoplete.nvim
+  let g:deoplete#sources#omni#input_patterns = {
+  \   "ruby" : '[^. *\t]\.\w*\|\h\w*::',
+  \}
+'''
+
+[[plugins]]
+repo = 'vim-scripts/SQLUtilities'
+on_ft = 'sql'
+hook_add = '''
+  let g:sqlutil_align_where = 1
+  let g:sqlutil_align_comma = 1
+  nnoremap :sql :SQLUFormatter<CR>
+'''

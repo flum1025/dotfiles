@@ -40,3 +40,7 @@ repo = 'dag/vim-fish'
 [[plugins]]
 repo = 'zaiste/tmux.vim'
 on_ft = 'tmux'
+
+[[plugins]]
+repo = 'posva/vim-vue'
+on_ft = 'vue'

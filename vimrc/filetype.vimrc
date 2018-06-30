@@ -14,4 +14,4 @@ au BufRead,BufNewFile .tmux.conf set ft=tmux
 au BufRead,BufNewFile *.ejs set ft=html
 
 " vue
-au BufRead,BufNewFile *.vue set ft=html
+au BufRead,BufNewFile *.vue set ft=vue

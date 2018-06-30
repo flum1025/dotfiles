@@ -4,6 +4,15 @@ nnoremap mg :MemoGrep<CR>
 
 let g:memolist_path = "$HOME/memolist"
 let g:memolist_memo_suffix = "md"
-let g:memolist_unite = 1
-let g:memolist_unite_source = "file_rec"
-let g:memolist_unite_option = "-auto-preview -start-insert"
+
+if dein#tap('unite.vim')
+  let g:memolist_unite = 1
+  let g:memolist_unite_source = "file_rec"
+  let g:memolist_unite_option = "-auto-preview -start-insert"
+endif
+
+if dein#tap('denite.nvim')
+  let g:memolist_denite = 1
+  let g:memolist_denite_source = "file_rec"
+  let g:memolist_denite_option = "-auto-preview -mode=normal"
+endif
