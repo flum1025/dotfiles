@@ -19,6 +19,7 @@ hook_add = '''
   let g:deoplete#enable_at_startup = 1
   let g:deoplete#enable_ignore_case = 1
   let g:deoplete#enable_smart_case = 1
+  let g:deoplete#file#enable_buffer_path = 1
 
   " <TAB>: completion.
   imap <silent><expr> <TAB> pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<TAB>" : deoplete#mappings#manual_complete()
