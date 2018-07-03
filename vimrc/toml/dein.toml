@@ -75,6 +75,18 @@ repo = 'Shougo/context_filetype.vim'
 
 [[plugins]]
 repo = 'fuenor/qfixgrep'
+hook_add = '''
+  if executable('rg')
+    let mygrepprg='rg'
+    let MyGrepcmd_useropt='-nH --no-heading --color never'
+    let MyGrepcmd_regexp=''
+    let MyGrepcmd_regexp_ignore='-i'
+    let MyGrepcmd_fix='-F'
+    let MyGrepcmd_fix_ignore='-F -i'
+    let MyGrepcmd_recursive=''
+    let MyGrep_GrepFilePattern='.'
+  endif
+'''
 
 [[plugins]]
 repo = 'LeafCage/yankround.vim'
