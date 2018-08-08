@@ -1,3 +1,4 @@
+map , <leader>
 inoremap <silent> jj <Esc>
 inoremap <C-s> <Esc>:w<CR>
 inoremap <C-d> <Esc>:w
