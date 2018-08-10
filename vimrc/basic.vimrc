@@ -26,8 +26,8 @@ set incsearch
 set hlsearch
 colorscheme onedark
 
-let g:python_host_prog = system('(type pyenv &>/dev/null && echo -n "$(pyenv root)/versions/$(pyenv global | grep python2)/bin/python") || echo -n $(which python2)')
-let g:python3_host_prog = system('(type pyenv &>/dev/null && echo -n "$(pyenv root)/versions/$(pyenv global | grep -e python3 -e anaconda3)/bin/python") || echo -n $(which python3)')
+let g:python_host_prog = system('echo -n $(which python2)')
+let g:python3_host_prog = system('echo -n $(which python3)')
 
 if !has('nvim')
   set ttymouse=sgr

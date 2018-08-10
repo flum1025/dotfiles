@@ -174,13 +174,9 @@ hook_source = '''
     \  ]
     \},
     \'component_function': {
-    \  'ale': 'ALEStatus'
+    \  'ale': 'ALEGetStatusLine'
     \}
   \ }
-
-  function! ALEStatus()
-    return ALEGetStatusLine()
-  endfunction
 '''
 
 [[plugins]]
