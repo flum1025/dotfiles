@@ -24,6 +24,7 @@ set splitbelow
 set splitright
 set incsearch
 set hlsearch
+set autoread
 colorscheme onedark
 
 let g:python_host_prog = system('echo -n $(which python2)')
@@ -32,6 +33,8 @@ let g:python3_host_prog = system('echo -n $(which python3)')
 if !has('nvim')
   set ttymouse=sgr
 endif
+
+autocmd InsertEnter,WinEnter * checktime
 
 " Vim本体がBracketed Paste Modeに対応していない時の為の設定。
 if &term =~ "xterm" || &term =~ "screen"
