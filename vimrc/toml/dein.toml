@@ -21,6 +21,20 @@ hook_add = '''
 repo = 'joshdick/onedark.vim'
 
 [[plugins]]
+repo = 'kassio/neoterm'
+hook_add = '''
+let g:neoterm_default_mod = 'botright'
+let g:neoterm_automap_keys = ',tt'
+let g:neoterm_autoinsert = 1
+let g:neoterm_size = 15
+nnoremap <F11> :Ttoggle<CR>
+inoremap <F11> <C-\><C-n>:Ttoggle<CR>
+tnoremap <F11> <C-\><C-n>:Ttoggle<CR>
+tnoremap <silent> <ESC> <C-\><C-n>
+tnoremap <silent> jj <C-\><C-n>
+'''
+
+[[plugins]]
 repo = 'itchyny/lightline.vim'
 hook_add = '''
   call RequirePlugin('lightline.vimrc')
