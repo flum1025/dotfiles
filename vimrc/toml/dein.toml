@@ -28,7 +28,7 @@ let g:neoterm_automap_keys = ',tt'
 let g:neoterm_autoinsert = 1
 let g:neoterm_size = 15
 nnoremap <C-k> :Ttoggle<CR>
-inoremap <C-k> <C-\><C-n>:Ttoggle<CR>
+inoremap <C-k> <ESC>:Ttoggle<CR>
 tnoremap <C-k> <C-\><C-n>:Ttoggle<CR>
 tnoremap <silent> <ESC> <C-\><C-n>
 tnoremap <silent> jj <C-\><C-n>
@@ -181,8 +181,11 @@ hook_source = '''
   let g:ale_open_list = 0
   let g:ale_keep_list_window_open = 0
 
+  let g:ale_javascript_prettier_use_local_config = 1
+
   let g:ale_fixers = {
-  \   'javascript': ['prettier'],
+  \   'javascript': ['prettier', 'eslint'],
+  \   'vue': ['prettier', 'eslint'],
   \   'ruby': ['rubocop'],
   \}
 
