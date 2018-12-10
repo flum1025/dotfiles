@@ -51,3 +51,11 @@ on_ft = 'rust'
 hook_source = '''
     let g:rustfmt_autosave = 1
 '''
+
+[[plugins]]
+repo = 'fatih/vim-go'
+on_ft = 'go'
+hook_source = '''
+    let g:go_fmt_command = "goimports"
+    let g:go_auto_sameids = 1
+'''

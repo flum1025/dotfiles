@@ -26,7 +26,7 @@ hook_add = '''
 let g:neoterm_default_mod = 'botright'
 let g:neoterm_automap_keys = ',tt'
 let g:neoterm_autoinsert = 1
-let g:neoterm_size = 15
+let g:neoterm_size = 20
 nnoremap <C-k> :Ttoggle<CR>
 inoremap <C-k> <ESC>:Ttoggle<CR>
 tnoremap <C-k> <C-\><C-n>:Ttoggle<CR>
@@ -169,7 +169,7 @@ hook_add = '''
 [[plugins]]
 repo = 'w0rp/ale'
 if = "(has('job') && has('channel') && has('timers')) || has('nvim')"
-hook_source = '''
+hook_add = '''
   let g:ale_enabled = 1
   let g:ale_statusline_format = ['⨉ %d', '⚠ %d', '⬥ ok']
   let g:ale_fix_on_save = 1
@@ -187,7 +187,12 @@ hook_source = '''
   \   'javascript': ['prettier', 'eslint'],
   \   'vue': ['prettier', 'eslint'],
   \   'ruby': ['rubocop'],
+  \   'go': ['gofmt', 'goimports']
   \}
+
+  let g:ale_linters = {'go': ['gometalinter']}
+
+  let g:ale_go_gometalinter_options = '--fast'
 
   let g:lightline = {
     \'active': {
