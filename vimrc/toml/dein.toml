@@ -314,3 +314,10 @@ hook_add = '''
 repo = 'Shougo/denite.nvim'
 depends = 'neomru.vim'
 if = 'has("nvim")'
+
+[[plugins]]
+repo = 'tyru/open-browser-github.vim'
+hook_add = '''
+noremap ogf :OpenGithubFile
+noremap ogp :OpenGithubProject
+'''
