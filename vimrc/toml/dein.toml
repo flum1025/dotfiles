@@ -184,8 +184,8 @@ hook_add = '''
   let g:ale_javascript_prettier_use_local_config = 1
 
   let g:ale_fixers = {
-  \   'javascript': ['prettier', 'eslint'],
-  \   'vue': ['prettier', 'eslint'],
+  \   'javascript': ['eslint'],
+  \   'vue': ['eslint'],
   \   'ruby': ['rubocop'],
   \   'go': ['gofmt', 'goimports']
   \}
