@@ -314,6 +314,9 @@ hook_add = '''
 repo = 'Shougo/denite.nvim'
 depends = 'neomru.vim'
 if = 'has("nvim")'
+hook_add = '''
+  nnoremap <silent> ,b :<C-u>Denite buffer<CR>
+'''
 
 [[plugins]]
 repo = 'tyru/open-browser-github.vim'
