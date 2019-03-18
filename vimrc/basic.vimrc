@@ -25,6 +25,7 @@ set splitright
 set incsearch
 set hlsearch
 set autoread
+set showmatch
 colorscheme onedark
 
 let g:python_host_prog = system('echo -n $(which python2)')

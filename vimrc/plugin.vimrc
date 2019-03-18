@@ -1,3 +1,5 @@
+source $VIMRUNTIME/macros/matchit.vim
+
 augroup vimrc-local
   autocmd!
   autocmd BufNewFile,BufReadPost * call s:vimrc_local(expand('<afile>:p:h'))

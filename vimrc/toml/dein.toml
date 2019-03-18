@@ -100,6 +100,7 @@ hook_add = '''
     let MyGrepcmd_fix_ignore='-F -i'
     let MyGrepcmd_recursive=''
     let MyGrep_GrepFilePattern='.'
+    let MyGrep_DefaultSearchWord = 1
   endif
 '''
 
@@ -289,36 +290,40 @@ hook_post_update = '''
 '''
 hook_add = '''
   noremap <silent>fzf :FZFHFiles<CR>
-  nnoremap <leader>f :FZFOpenFile<CR>
+  nnoremap <leader>f :FZFJumpFile<CR>
 
-  command! FZFOpenFile call FZFOpenFileFunc()
+  command! FZFJumpFile call FZFJumpFileFunc()
   command! FZFHFiles call FZFHFilesFunc()
 
   function! FZFHFilesFunc()
-    call fzf#run({
+    call fzf#run(fzf#wrap('FZFHFilesFunc', {
           \ 'source': 'rg --files --hidden --follow --glob "!.git" --glob "!.DS_Store"',
-          \ 'sink': 'e',
-          \ 'options': '-x +s',
-          \ 'down':    '40%'})
+          \ 'options': '-x +s --sort --prompt "> "',
+          \ 'down':    '40%'}))
   endfunction
 
-  function! FZFOpenFileFunc()
+  function! FZFJumpFileFunc()
     let s:file_path = expand("<cfile>")
     if s:file_path == ''
       echo '[Error] <cfile> return empty string.'
       return 0
     endif
 
-    if s:file_path[0] == '.'
-      let s:file_dir = expand("%:h")
-      let s:file_path = s:file_dir . s:file_path[1:]
+    let s:file_dir = expand("%:h")
+    let s:dist_file_path = s:file_dir . "/" . s:file_path
+    if filereadable(s:dist_file_path)
+      call FZFOpenFileFunc(fnamemodify(s:dist_file_path, ":."))
+      return
     endif
 
-    call fzf#run({
+    call FZFOpenFileFunc(fnamemodify(s:file_path, ":t"))
+  endfunction
+
+  function! FZFOpenFileFunc(query)
+    call fzf#run(fzf#wrap('FZFHFilesFunc', {
           \ 'source': 'rg --files --hidden --follow',
-          \ 'sink': 'e',
-          \ 'options': '-x +s --query=' . shellescape(s:file_path),
-          \ 'down':    '40%'})
+          \ 'options': '-x +s --sort --prompt "> " --query=' . shellescape(a:query),
+          \ 'down':    '40%'}))
   endfunction
 '''
 
