@@ -289,42 +289,10 @@ hook_post_update = '''
   endif
 '''
 hook_add = '''
-  noremap <silent>fzf :FZFHFiles<CR>
-  nnoremap <leader>f :FZFJumpFile<CR>
-
-  command! FZFJumpFile call FZFJumpFileFunc()
-  command! FZFHFiles call FZFHFilesFunc()
-
-  function! FZFHFilesFunc()
-    call fzf#run(fzf#wrap('FZFHFilesFunc', {
-          \ 'source': 'rg --files --hidden --follow --glob "!.git" --glob "!.DS_Store"',
-          \ 'options': '-x +s --sort --prompt "> "',
-          \ 'down':    '40%'}))
-  endfunction
-
-  function! FZFJumpFileFunc()
-    let s:file_path = expand("<cfile>")
-    if s:file_path == ''
-      echo '[Error] <cfile> return empty string.'
-      return 0
-    endif
-
-    let s:file_dir = expand("%:h")
-    let s:dist_file_path = s:file_dir . "/" . s:file_path
-    if filereadable(s:dist_file_path)
-      call FZFOpenFileFunc(fnamemodify(s:dist_file_path, ":."))
-      return
-    endif
-
-    call FZFOpenFileFunc(fnamemodify(s:file_path, ":t"))
-  endfunction
-
-  function! FZFOpenFileFunc(query)
-    call fzf#run(fzf#wrap('FZFHFilesFunc', {
-          \ 'source': 'rg --files --hidden --follow',
-          \ 'options': '-x +s --sort --prompt "> " --query=' . shellescape(a:query),
-          \ 'down':    '40%'}))
-  endfunction
+  noremap <silent>fzf :call FZFHFilesFunc()<CR>
+  nnoremap <leader>f :call FZFJumpFileFunc(expand("<cfile>"))<CR>
+  vnoremap <leader>f :call FZFJumpFileFunc(GetSelectionText())<CR>
+  call RequirePlugin('fzf.vimrc')
 '''
 
 [[plugins]] # Deprecated
