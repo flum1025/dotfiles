@@ -100,7 +100,7 @@ hook_add = '''
     let MyGrepcmd_fix_ignore='-F -i'
     let MyGrepcmd_recursive=''
     let MyGrep_GrepFilePattern='.'
-    let MyGrep_DefaultSearchWord = 1
+    let MyGrep_DefaultSearchWord = 0
   endif
 '''
 
