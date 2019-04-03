@@ -4,8 +4,8 @@ export LANG=ja_JP.UTF-8 #文字コードをUTF-8に設定
 
 # history
 HISTFILE=${HOME}/.zsh_history
-HISTSIZE=1000
-SAVEHIST=1000
+HISTSIZE=100000
+SAVEHIST=100000
 setopt extended_history #ヒストリに実行時間も保存
 setopt hist_ignore_dups #直前と同じコマンドはヒストリに追加しない
 
