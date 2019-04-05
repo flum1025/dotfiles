@@ -343,3 +343,6 @@ hook_add = '''
     endif
   endfunc
 '''
+
+[[plugins]]
+repo = 'nicwest/vim-camelsnek'
