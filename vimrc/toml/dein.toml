@@ -149,9 +149,6 @@ hook_add = '''
 repo = 'ConradIrwin/vim-bracketed-paste'
 
 [[plugins]]
-repo = 'vim-scripts/sudo.vim'
-
-[[plugins]]
 repo = 'thinca/vim-quickrun'
 hook_add = '''
   let g:quickrun_config = {
@@ -160,12 +157,6 @@ hook_add = '''
 
   noremap <F4> :QuickRun<CR>
   inoremap <F4> <Esc>:QuickRun<CR>
-'''
-
-[[plugins]]
-repo = 'Shougo/vimshell.vim'
-hook_add = '''
-  noremap <silent> vsh :VimShell<CR>
 '''
 
 [[plugins]]

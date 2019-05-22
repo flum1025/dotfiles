@@ -49,3 +49,6 @@ nnoremap う u
 nnoremap お o
 nnoremap っd dd
 inoremap <silent> っj <ESC>
+noremap <C-j> <ESC>
+inoremap <C-j> <ESC>
+vnoremap <C-j> <ESC>
