@@ -60,3 +60,7 @@ hook_source = '''
     let g:go_fmt_command = "goimports"
     let g:go_auto_sameids = 1
 '''
+
+[[plugins]]
+repo = 'leafgarland/typescript-vim'
+on_ft = 'typescript'
