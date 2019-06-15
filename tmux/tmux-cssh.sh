@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# ORIGINAL RPEO: https://github.com/peikk0/tmux-cssh
+# ORIGINAL REPO: https://github.com/peikk0/tmux-cssh
 
 hosts=""
 ssh_options=""
