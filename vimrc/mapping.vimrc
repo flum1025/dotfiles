@@ -14,7 +14,7 @@ noremap ;2C <Esc>w
 " ^[f
 noremap <Esc>f <Esc>w
 
-noremap <F10> :<C-u>sp<CR>:e<Space>~/dotfiles/command<CR>
+noremap <F10> :<C-u>sp<CR>:e<Space>~/dotfiles/vimrc/command<CR>
 
 nnoremap s <Nop>
 nnoremap sj <C-w>j
