@@ -27,7 +27,7 @@ hook_add = '''
 let g:neoterm_default_mod = 'botright'
 let g:neoterm_automap_keys = ',tt'
 let g:neoterm_autoinsert = 1
-let g:neoterm_size = 20
+let g:neoterm_size = 25
 nnoremap <C-k> :Ttoggle<CR>
 inoremap <C-k> <ESC>:Ttoggle<CR>
 tnoremap <C-k> <C-\><C-n>:Ttoggle<CR>
