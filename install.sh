@@ -38,6 +38,12 @@ mkdir -p ~/.tmux/plugins
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 . ~/.tmux/plugins/tpm/bin/install_plugins
 
+echo "Install git config"
+cat << EOS >> ~/.gitconfig
+[include]
+  path = ~/dotfiles/git/.gitconfig
+EOS
+
 askYesOrNo "Do you want to use 'Neovim'?"
 if [ $? -eq 0 ]; then
   echo "Setup 'Neovim'"
