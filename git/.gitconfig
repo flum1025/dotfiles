@@ -6,3 +6,5 @@
   open = !open $(git remote-url)
   create-pr = !open $(git remote-url)/compare/master...$(git rev-parse --abbrev-ref HEAD)
   show-pr = !"f() { git log --merges --oneline --reverse --ancestry-path $1...master | grep 'Merge pull request #' | head -n 1; }; f"
+[url "git@github.com:"]
+  insteadOf = https://github.com/
