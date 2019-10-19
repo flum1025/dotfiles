@@ -44,6 +44,9 @@ on_ft = 'tmux'
 [[plugins]]
 repo = 'posva/vim-vue'
 on_ft = 'vue'
+hook_add = '''
+  let g:vue_pre_processors = 'detect_on_enter'
+'''
 
 [[plugins]]
 repo = 'jparise/vim-graphql'

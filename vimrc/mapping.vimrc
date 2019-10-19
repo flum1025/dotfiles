@@ -1,10 +1,7 @@
 map , <leader>
 inoremap <silent> jj <Esc>
 inoremap <C-s> <Esc>:w<CR>
-inoremap <C-d> <Esc>:w
 noremap <C-s> :w<CR>
-noremap <C-d> :w
-noremap <silent> sq :q<CR>
 noremap <silent> zzz :q!<CR>
 noremap :jq :%!jq '.'<CR>
 " Shift-Left
