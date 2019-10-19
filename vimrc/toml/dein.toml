@@ -179,18 +179,19 @@ hook_add = '''
   let g:ale_go_gometalinter_options = '--fast'
 
   let g:ale_fixers = {
-  \   'javascript': ['eslint'],
-  \   'typescript': ['eslint'],
-  \   'vue': ['eslint'],
+  \   'javascript': ['prettier', 'eslint'],
+  \   'typescript': ['prettier', 'eslint'],
+  \   'vue': ['prettier', 'eslint'],
   \   'ruby': ['rubocop'],
   \   'go': ['gofmt', 'goimports']
   \}
 
   let g:ale_linters = {
-  \   'go': ['gometalinter'],
+  \   'javascript': ['prettier', 'eslint'],
+  \   'typescript': ['prettier', 'eslint'],
+  \   'vue': ['prettier', 'eslint'],
   \   'ruby': ['rubocop'],
-  \   'javascript': ['eslint'],
-  \   'typescript': ['eslint']
+  \   'go': ['gometalinter']
   \}
 
   let g:lightline = {
@@ -322,6 +323,9 @@ hook_add = '''
 
 [[plugins]]
 repo = 'tyru/open-browser-github.vim'
+hook_add = '''
+  let g:openbrowser_github_url_exists_check = 'ignore'
+'''
 
 [[plugins]]
 repo = 'terryma/vim-multiple-cursors'
