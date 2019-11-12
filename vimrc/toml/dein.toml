@@ -176,14 +176,25 @@ hook_add = '''
 
   let g:ale_javascript_prettier_use_local_config = 1
   let g:ale_typescript_tslint_executable = 'eslint'
+
   let g:ale_go_gometalinter_options = '--fast'
+
+  let g:ale_python_flake8_executable = g:python3_host_prog
+  let g:ale_python_flake8_options = '-m flake8'
+  let g:ale_python_autopep8_executable = g:python3_host_prog
+  let g:ale_python_autopep8_options = '-m autopep8'
+  let g:ale_python_isort_executable = g:python3_host_prog
+  let g:ale_python_isort_options = '-m isort'
+  let g:ale_python_black_executable = g:python3_host_prog
+  let g:ale_python_black_options = '-m black'
 
   let g:ale_fixers = {
   \   'javascript': ['prettier', 'eslint'],
   \   'typescript': ['prettier', 'eslint'],
   \   'vue': ['prettier', 'eslint'],
   \   'ruby': ['rubocop'],
-  \   'go': ['gofmt', 'goimports']
+  \   'go': ['gofmt', 'goimports'],
+  \   'python': ['autopep8', 'black', 'isort']
   \}
 
   let g:ale_linters = {
@@ -191,7 +202,8 @@ hook_add = '''
   \   'typescript': ['prettier', 'eslint'],
   \   'vue': ['prettier', 'eslint'],
   \   'ruby': ['rubocop'],
-  \   'go': ['gometalinter']
+  \   'go': ['gometalinter'],
+  \   'python': ['flake8']
   \}
 
   let g:lightline = {

@@ -1,3 +1,6 @@
+" executor設定
+source ~/dotfiles/vimrc/prepare_executor.vimrc
+
 " dein.vim設定
 source ~/dotfiles/vimrc/dein.vimrc
 
