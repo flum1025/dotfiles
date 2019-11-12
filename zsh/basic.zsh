@@ -11,6 +11,7 @@ setopt hist_ignore_dups #直前と同じコマンドはヒストリに追加し�
 
 setopt nonomatch #勝手ファイル名として解析されるのを防ぐ
 
+bindkey -e
 bindkey "^[[3~" delete-char # Deleteを使えるようにする
 
 # vi ライクな操作ができる
