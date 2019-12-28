@@ -45,25 +45,6 @@ hook_add = '''
 repo = 'Yggdroot/indentLine'
 
 [[plugins]]
-repo = 'szw/vim-tags'
-hook_add = '''
-  :set tags=./tags;
-
-  augroup AlpacaTags
-    autocmd!
-    if exists(':Tags')
-      autocmd BufWritePost Gemfile TagsBundle
-      autocmd BufEnter * TagsSet
-      " 毎回保存と同時更新する場合はコメントを外す
-      autocmd BufWritePost * TagsUpdate
-    endif
-  augroup END
-
-  nnoremap <C-h> :vsp<CR> :exe("tjump ".expand('<cword>'))<CR>
-  nnoremap <C-k> :split<CR> :exe("tjump ".expand('<cword>'))<CR>
-'''
-
-[[plugins]]
 repo = 'kana/vim-submode'
 hook_add = '''
   call submode#enter_with('bufmove', 'n', '', 's>', '<C-w>>')
@@ -105,14 +86,9 @@ hook_add = '''
 '''
 
 [[plugins]]
-repo = 'LeafCage/yankround.vim'
+repo = 'Shougo/neoyank.vim'
 hook_add = '''
-  nmap p <Plug>(yankround-p)
-  nmap P <Plug>(yankround-P)
-  nmap gp <Plug>(yankround-gp)
-  nmap gP <Plug>(yankround-gP)
-  nmap <C-p> <Plug>(yankround-prev)
-  nmap <C-n> <Plug>(yankround-next)
+  nmap <C-p> :Denite neoyank<CR>
 '''
 
 [[plugins]]
@@ -138,14 +114,6 @@ hook_source = '''
 '''
 
 [[plugins]]
-repo = 'vim-scripts/open-browser.vim'
-hook_add = '''
-  let g:netrw_nogx = 1
-  nmap gx <Plug>(openbrowser-smart-search)
-  vmap gx <Plug>(openbrowser-smart-search)
-'''
-
-[[plugins]]
 repo = 'ConradIrwin/vim-bracketed-paste'
 
 [[plugins]]
@@ -163,61 +131,7 @@ hook_add = '''
 repo = 'w0rp/ale'
 if = "(has('job') && has('channel') && has('timers')) || has('nvim')"
 hook_add = '''
-  let g:ale_enabled = 1
-  let g:ale_statusline_format = ['⨉ %d', '⚠ %d', '⬥ ok']
-  let g:ale_fix_on_save = 1
-  let g:ale_lint_on_enter = 0
-  let g:ale_lint_on_text_changed = 'never'
-
-  let g:ale_set_loclist = 0
-  let g:ale_set_quickfix = 0
-  let g:ale_open_list = 0
-  let g:ale_keep_list_window_open = 0
-
-  let g:ale_javascript_prettier_use_local_config = 1
-  let g:ale_typescript_tslint_executable = 'eslint'
-
-  let g:ale_go_gometalinter_options = '--fast'
-
-  let g:ale_python_flake8_executable = g:python3_host_prog
-  let g:ale_python_flake8_options = '-m flake8'
-  let g:ale_python_autopep8_executable = g:python3_host_prog
-  let g:ale_python_autopep8_options = '-m autopep8'
-  let g:ale_python_isort_executable = g:python3_host_prog
-  let g:ale_python_isort_options = '-m isort'
-  let g:ale_python_black_executable = g:python3_host_prog
-  let g:ale_python_black_options = '-m black'
-
-  let g:ale_fixers = {
-  \   'javascript': ['prettier', 'eslint'],
-  \   'typescript': ['prettier', 'eslint'],
-  \   'vue': ['prettier', 'eslint'],
-  \   'ruby': ['rubocop'],
-  \   'go': ['gofmt', 'goimports'],
-  \   'python': ['autopep8', 'black', 'isort']
-  \}
-
-  let g:ale_linters = {
-  \   'javascript': ['prettier', 'eslint'],
-  \   'typescript': ['prettier', 'eslint'],
-  \   'vue': ['prettier', 'eslint'],
-  \   'ruby': ['rubocop'],
-  \   'go': ['gometalinter'],
-  \   'python': ['flake8']
-  \}
-
-  let g:lightline = {
-    \'active': {
-    \  'left': [
-    \    ['mode', 'paste'],
-    \    ['readonly', 'filename', 'modified'],
-    \    ['ale'],
-    \  ]
-    \},
-    \'component_function': {
-    \  'ale': 'ALEGetStatusLine'
-    \}
-  \ }
+  call RequirePlugin('ale.vimrc')
 '''
 
 [[plugins]]
@@ -235,20 +149,6 @@ nnoremap <silent> K :call LanguageClient_textDocument_hover()<CR>
 nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
 nnoremap <silent> <F2> :call LanguageClient_textDocument_rename()<CR>
 '''
-
-[[plugins]]
-repo = 'scrooloose/syntastic'
-if = "(!has('job') || !has('channel') || !has('timers')) && !has('nvim')"
-hook_source = '''
-  set statusline+=%#warningmsg#
-  set statusline+=%{SyntasticStatuslineFlag()}
-  set statusline+=%*
-
-  let g:syntastic_python_checkers = ['']
-'''
-
-[[plugins]]
-repo = 'thinca/vim-ref'
 
 [[plugins]]
 repo = 'vim-scripts/taglist.vim'
@@ -305,26 +205,6 @@ hook_add = '''
   call RequirePlugin('fzf.vimrc')
 '''
 
-[[plugins]] # Deprecated
-repo = 'Shougo/unite.vim'
-depends = 'neomru.vim'
-if = '!has("nvim")'
-hook_add = '''
-  let g:unite_enable_start_insert=1
-  let g:unite_source_history_yank_enable =1
-  let g:unite_source_file_mru_limit = 200
-
-  nnoremap <silent> ,uy :<C-u>Unite history/yank<CR>
-  nnoremap <silent> ,uu :<C-u>Unite file_mru buffer<CR>
-
-  nnoremap <silent> ,g :<C-u>Unite grep:. -buffer-name=search-buffer<CR>
-  if executable('pt')
-    let g:unite_source_grep_command = 'pt'
-    let g:unite_source_grep_default_opts = '--nogroup --nocolor'
-    let g:unite_source_grep_recursive_opt = ''
-  endif
-'''
-
 [[plugins]]
 repo = 'Shougo/denite.nvim'
 depends = 'neomru.vim'
@@ -334,7 +214,16 @@ hook_add = '''
 '''
 
 [[plugins]]
+repo = 'vim-scripts/open-browser.vim'
+hook_add = '''
+  let g:netrw_nogx = 1
+  nmap gx <Plug>(openbrowser-smart-search)
+  vmap gx <Plug>(openbrowser-smart-search)
+'''
+
+[[plugins]]
 repo = 'tyru/open-browser-github.vim'
+depends = 'open-browser.vim'
 hook_add = '''
   let g:openbrowser_github_url_exists_check = 'ignore'
 '''

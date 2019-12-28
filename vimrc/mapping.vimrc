@@ -1,5 +1,4 @@
 map , <leader>
-" inoremap <silent> jj <Esc>
 inoremap <C-s> <Esc>:w<CR>
 noremap <C-s> :w<CR>
 noremap <silent> zzz :q!<CR>
@@ -42,7 +41,3 @@ nnoremap い i
 nnoremap う u
 nnoremap お o
 nnoremap っd dd
-" inoremap <silent> っj <ESC>
-" noremap <C-j> <ESC>
-" inoremap <C-j> <ESC>
-" vnoremap <C-j> <ESC>
