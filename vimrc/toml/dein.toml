@@ -135,22 +135,6 @@ hook_add = '''
 '''
 
 [[plugins]]
-repo = 'autozimu/LanguageClient-neovim'
-depends = 'deoplete.nvim'
-on_ft = ['rust']
-build = './install.sh'
-hook_source = '''
-set hidden
-let g:LanguageClient_serverCommands = {
-    \ 'rust': ['rustup', 'run', 'nightly', 'rls'],
-    \ }
-let g:LanguageClient_autoStart = 1
-nnoremap <silent> K :call LanguageClient_textDocument_hover()<CR>
-nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
-nnoremap <silent> <F2> :call LanguageClient_textDocument_rename()<CR>
-'''
-
-[[plugins]]
 repo = 'vim-scripts/taglist.vim'
 hook_add = '''
   if has("osx")
@@ -175,17 +159,17 @@ nnoremap sub :OverCommandLine<CR>%s/<C-r><C-w>//g<Left><Left>
 nnoremap subp y:OverCommandLine<CR>%s!<C-r>=substitute(@0, '!', '\\!', 'g')<CR>!!gI<Left><Left><Left>
 '''
 
-[[plugins]]
-repo = 'osyo-manga/vim-precious'
-hook_add = '''
-  let g:precious_enable_switch_CursorMoved = { '*': 0, 'help': 1 }
-  augroup MyAutoCmd
-    autocmd!
-    " Toggle on insert
-    autocmd InsertEnter * :PreciousSwitch
-    autocmd InsertLeave * :PreciousReset
-  augroup END
-'''
+# [[plugins]]
+# repo = 'osyo-manga/vim-precious'
+# hook_add = '''
+#   let g:precious_enable_switch_CursorMoved = { '*': 0, 'help': 1 }
+#   augroup MyAutoCmd
+#     autocmd!
+#     " Toggle on insert
+#     autocmd InsertEnter * :PreciousSwitch
+#     autocmd InsertLeave * :PreciousReset
+#   augroup END
+# '''
 
 [[plugins]]
 repo = 'easymotion/vim-easymotion'
@@ -230,9 +214,16 @@ hook_add = '''
 
 [[plugins]]
 repo = 'terryma/vim-multiple-cursors'
-hook_add = '''
-  call RequirePlugin('vim-multiple-cursors.vimrc')
-'''
+# hook_add = '''
+#   call RequirePlugin('vim-multiple-cursors.vimrc')
+# '''
 
 [[plugins]]
 repo = 'nicwest/vim-camelsnek'
+
+[[plugins]]
+repo = 'neoclide/coc.nvim'
+rev = 'release'
+hook_add = '''
+  call RequirePlugin('coc.vimrc')
+'''
