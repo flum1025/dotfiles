@@ -213,10 +213,7 @@ hook_add = '''
 '''
 
 [[plugins]]
-repo = 'terryma/vim-multiple-cursors'
-# hook_add = '''
-#   call RequirePlugin('vim-multiple-cursors.vimrc')
-# '''
+repo = 'mg979/vim-visual-multi'
 
 [[plugins]]
 repo = 'nicwest/vim-camelsnek'
