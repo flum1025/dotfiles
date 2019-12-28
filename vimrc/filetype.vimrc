@@ -15,3 +15,6 @@ au BufRead,BufNewFile *.ejs set ft=html
 
 " vue
 au BufRead,BufNewFile *.vue set ft=vue
+
+" kotlin
+au BufRead,BufNewFile *.kt set ft=kotlin
