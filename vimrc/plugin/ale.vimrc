@@ -27,7 +27,9 @@ let g:ale_python_black_options = '-m black'
 let g:ale_fixers = {
 \   'javascript': ['prettier', 'eslint'],
 \   'typescript': ['prettier', 'eslint'],
-\   'vue': ['prettier', 'eslint'],
+\   'vue': ['prettier', 'eslint', 'stylelint'],
+\   'css': ['stylelint'],
+\   'scss': ['stylelint'],
 \   'ruby': ['rubocop'],
 \   'go': ['gofmt', 'goimports'],
 \   'python': ['autopep8', 'black', 'isort']
@@ -36,7 +38,9 @@ let g:ale_fixers = {
 let g:ale_linters = {
 \   'javascript': ['prettier', 'eslint'],
 \   'typescript': ['prettier', 'eslint'],
-\   'vue': ['prettier', 'eslint'],
+\   'vue': ['prettier', 'eslint', 'stylelint'],
+\   'css': ['stylelint'],
+\   'scss': ['stylelint'],
 \   'ruby': ['rubocop'],
 \   'go': ['gometalinter'],
 \   'python': ['flake8']
