@@ -4,7 +4,7 @@
   co = !git checkout
   remote-url = !git remote get-url --all origin | sed -E 's/git@(.+):(.+).git/https:\\/\\/\\1\\/\\2/'
   open = !open $(git remote-url)
-  create-pr = !open $(git remote-url)/compare/master...$(git rev-parse --abbrev-ref HEAD)
+  create-pr = !open $(git remote-url)/compare/$(git remote show origin | grep 'HEAD branch' | awk '{print $3}')...$(git rev-parse --abbrev-ref HEAD)
   show-pr = !"f() { git log --merges --oneline --reverse --ancestry-path $1...master | grep 'Merge pull request #' | head -n 1; }; f"
 [url "git@github.com:"]
   insteadOf = https://github.com/
