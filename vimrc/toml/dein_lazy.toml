@@ -79,10 +79,6 @@ hook_add = '''
   let g:switch_mapping = "-"
 '''
 
-[[plugins]]
-repo = 'vim-scripts/Align'
-on_cmd = ['Align']
-
 # For Language
 
 [[plugins]]

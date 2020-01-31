@@ -224,3 +224,10 @@ rev = 'release'
 hook_add = '''
   call RequirePlugin('coc.vimrc')
 '''
+
+[[plugins]]
+repo = 'junegunn/vim-easy-align'
+hook_add = '''
+xmap ga <Plug>(EasyAlign)
+nmap ga <Plug>(EasyAlign)
+'''
