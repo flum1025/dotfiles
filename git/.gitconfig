@@ -6,5 +6,6 @@
   open = !open $(git remote-url)
   create-pr = !open $(git remote-url)/compare/$(git remote show origin | grep 'HEAD branch' | awk '{print $3}')...$(git rev-parse --abbrev-ref HEAD)
   show-pr = !"f() { git log --merges --oneline --reverse --ancestry-path $1...master | grep 'Merge pull request #' | head -n 1; }; f"
+  clean-branches = !git branch --merged develop | grep -vE '^\\*|\\<master\\>|\\<develop\\>' | xargs -I % git branch -d %
 [url "git@github.com:"]
   insteadOf = https://github.com/
