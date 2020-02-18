@@ -13,6 +13,5 @@ endif
 
 if dein#tap('denite.nvim')
   let g:memolist_denite = 1
-  let g:memolist_denite_source = "file_rec"
-  let g:memolist_denite_option = "-auto-preview -mode=normal"
+  let g:memolist_denite_source = "file/rec"
 endif
