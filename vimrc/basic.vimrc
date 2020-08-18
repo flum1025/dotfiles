@@ -28,8 +28,6 @@ set autoread
 set showmatch
 set tags=./tags;
 
-colorscheme onedark
-
 if !has('nvim')
   set ttymouse=sgr
 endif

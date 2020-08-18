@@ -20,6 +20,9 @@ hook_add = '''
 
 [[plugins]]
 repo = 'joshdick/onedark.vim'
+hook_add = '''
+  colorscheme onedark
+'''
 
 [[plugins]]
 repo = 'kassio/neoterm'
