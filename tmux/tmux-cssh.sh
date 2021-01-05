@@ -46,6 +46,14 @@ while [ $# -ne 0 ]; do
       fi
       aws_profile_name="$1"; shift
       ;;
+    -p)
+      shift;
+      if [ $# -eq 0 ]; then
+        usage
+        exit 2
+      fi
+      hosts=$(aws ec2 describe-instances --profile $aws_profile_name --output text --query "Reservations[*].Instances[*].PrivateIpAddress" --filter "Name=tag:aws:autoscaling:groupName,Values=$1"); shift
+      ;;
     -g)
       shift;
       if [ $# -eq 0 ]; then
