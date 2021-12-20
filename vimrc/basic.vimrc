@@ -26,6 +26,7 @@ set incsearch
 set hlsearch
 set autoread
 set showmatch
+set startofline
 set tags=./tags;
 
 if !has('nvim')
