@@ -2,9 +2,9 @@
 repo = 'cespare/vim-toml'
 on_ft = 'toml'
 
-# [[plugins]]
-# repo = 'vim-jp/cpp-vim'
-# on_ft = 'cpp'
+[[plugins]]
+repo = 'vim-jp/cpp-vim'
+on_ft = 'cpp'
 
 [[plugins]]
 repo = 'elzr/vim-json'
@@ -21,14 +21,6 @@ on_ft = ['markdown', 'mkd']
 repo = 'vim-ruby/vim-ruby'
 on_map = '<Plug>'
 on_ft = 'ruby'
-
-# [[plugins]]
-# repo = 'tpope/vim-rails'
-# on_ft = 'ruby'
-
-# [[plugins]]
-# repo = 'slim-template/vim-slim'
-# on_ft = 'slim'
 
 [[plugins]]
 repo = 'cakebaker/scss-syntax.vim'

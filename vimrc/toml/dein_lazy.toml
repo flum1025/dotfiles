@@ -1,74 +1,4 @@
 [[plugins]]
-repo = 'Shougo/neomru.vim'
-on_path = '.*'
-
-[[plugins]] # Deprecated
-repo = 'Shougo/neocomplete.vim'
-depends = 'context_filetype.vim'
-if = 'has("lua")'
-on_i = 1
-hook_add = '''
-  call RequirePlugin('neocomplete.vimrc')
-'''
-
-# [[plugins]]
-# repo = 'Shougo/deoplete.nvim'
-# if = 'has("nvim")'
-# on_i = 1
-# hook_add = '''
-#   let g:deoplete#enable_at_startup = 1
-#   let g:deoplete#auto_complete_delay = 0
-#   let g:deoplete#enable_ignore_case = 0
-#   let g:deoplete#enable_smart_case = 1
-#   let g:deoplete#file#enable_buffer_path = 1
-#   let g:deoplete#auto_complete_start_length = 1
-#
-#   " <TAB>: completion.
-#   imap <silent><expr> <TAB> pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<TAB>" : deoplete#mappings#manual_complete()
-#   function! s:check_back_space() abort
-#     let col = col('.') - 1
-#     return !col || getline('.')[col - 1]  =~ '\s'
-#   endfunction
-#
-#   " <S-TAB>: completion back.
-#   inoremap <expr><S-TAB>  pumvisible() ? "\<C-p>" : "\<C-h>"
-# '''
-
-[[plugins]]
-repo = 'Shougo/neosnippet'
-depends = 'deoplete.nvim'
-on_i = 1
-hook_add = '''
-  let g:neosnippet#snippets_directory = '~/dotfiles/vimrc/snippets/'
-  imap <C-k> <Plug>(neosnippet_expand_or_jump)
-  smap <C-k> <Plug>(neosnippet_expand_or_jump)
-  xmap <C-k> <Plug>(neosnippet_expand_target)
-
-  if has('conceal')
-    set conceallevel=2 concealcursor=i
-  endif
-'''
-
-[[plugins]]
-repo = 'sebastianmarkow/deoplete-rust'
-on_ft = 'rust'
-depends = ['deoplete.nvim']
-hook_source = '''
-    
-    let g:deoplete#sources#rust#racer_binary=$HOME.'/.cargo/bin/racer'
-    let g:deoplete#sources#rust#rust_source_path=$HOME.'/.rustup/toolchains/nightly-x86_64-apple-darwin/lib/rustlib/src/rust/src'
-    let g:deoplete#sources#rust#show_duplicates=1
-    let g:deoplete#sources#rust#disable_keymap=1
-    nmap <buffer> gd <plug>DeopleteRustGoToDefinitionDefault
-    nmap <buffer> K  <plug>DeopleteRustShowDocumentation
-'''
-
-[[plugins]]
-repo = 'Shougo/neosnippet-snippets'
-depends = 'neosnippet'
-on_i = 1
-
-[[plugins]]
 repo = 'cohama/lexima.vim'
 on_i = 1
 
@@ -78,6 +8,35 @@ on_i = 1
 hook_add = '''
   let g:switch_mapping = "-"
 '''
+
+[[plugins]]
+repo = 'osyo-manga/vim-precious'
+on_i = 1
+hook_add = '''
+  let g:precious_enable_switch_CursorMoved = { '*': 0, 'help': 1 }
+  augroup MyAutoCmd
+    autocmd!
+    " Toggle on insert
+    autocmd InsertEnter * :PreciousSwitch
+    autocmd InsertLeave * :PreciousReset
+  augroup END
+'''
+
+[[plugins]]
+repo = 'junegunn/vim-easy-align'
+on_i = 1
+hook_add = '''
+xmap ga <Plug>(EasyAlign)
+nmap ga <Plug>(EasyAlign)
+'''
+
+[[plugins]]
+repo = 'tomtom/tcomment_vim'
+on_i = 1
+
+[[plugins]]
+repo = 'tpope/vim-surround'
+on_i = 1
 
 # For Language
 
@@ -95,20 +54,3 @@ hook_add = '''
 [[plugins]]
 repo = 'mattn/emmet-vim'
 on_ft = 'html'
-
-[[plugins]]
-repo = 'osyo-manga/vim-monster'
-depends = 'deoplete.nvim'
-on_ft = 'ruby'
-hook_post_update = '''
-  execute '!gem install rcodetools'
-'''
-hook_add = '''
-  " Set async completion.
-  " let g:monster#completion#rcodetools#backend = "async_rct_complete"
-
-  " Use deoplete.nvim
-  let g:deoplete#sources#omni#input_patterns = {
-  \   "ruby" : '[^. *\t]\.\w*\|\h\w*::',
-  \}
-'''

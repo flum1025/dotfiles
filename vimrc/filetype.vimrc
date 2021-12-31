@@ -18,3 +18,6 @@ au BufRead,BufNewFile *.vue set ft=vue
 
 " kotlin
 au BufRead,BufNewFile *.kt set ft=kotlin
+
+" graphql
+au BufRead,BufNewFile *.graphql,*.gql set ft=graphql
