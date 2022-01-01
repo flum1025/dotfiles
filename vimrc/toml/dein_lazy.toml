@@ -10,19 +10,6 @@ hook_add = '''
 '''
 
 [[plugins]]
-repo = 'osyo-manga/vim-precious'
-on_i = 1
-hook_add = '''
-  let g:precious_enable_switch_CursorMoved = { '*': 0, 'help': 1 }
-  augroup MyAutoCmd
-    autocmd!
-    " Toggle on insert
-    autocmd InsertEnter * :PreciousSwitch
-    autocmd InsertLeave * :PreciousReset
-  augroup END
-'''
-
-[[plugins]]
 repo = 'junegunn/vim-easy-align'
 on_i = 1
 hook_add = '''
