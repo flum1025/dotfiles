@@ -7,5 +7,6 @@ if executable('rg')
     call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
   endfunction
 
+  command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --ignore-case -- ".shellescape(<q-args>), 1, fzf#vim#with_preview(), <bang>0)
   command! -nargs=* -bang RG call FZGrep(<q-args>, <bang>0)
 endif
