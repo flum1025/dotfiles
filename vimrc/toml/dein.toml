@@ -73,22 +73,6 @@ repo = 'vim-scripts/AnsiEsc.vim'
 repo = 'Shougo/context_filetype.vim'
 
 [[plugins]]
-repo = 'fuenor/qfixgrep'
-hook_add = '''
-  if executable('rg')
-    let mygrepprg='rg'
-    let MyGrepcmd_useropt='-nH --no-heading --color never'
-    let MyGrepcmd_regexp=''
-    let MyGrepcmd_regexp_ignore='-i'
-    let MyGrepcmd_fix='-F'
-    let MyGrepcmd_fix_ignore='-F -i'
-    let MyGrepcmd_recursive=''
-    let MyGrep_GrepFilePattern='.'
-    let MyGrep_DefaultSearchWord = 0
-  endif
-'''
-
-[[plugins]]
 repo = 'Shougo/neoyank.vim'
 hook_add = '''
   nmap <C-p> :Denite neoyank<CR>
@@ -132,10 +116,19 @@ hook_post_update = '''
   endif
 '''
 hook_add = '''
-  noremap <silent>fzf :call FZFHFilesFunc()<CR>
   nnoremap <leader>f :call FZFJumpFileFunc(expand("<cfile>"))<CR>
   vnoremap <leader>f :call FZFJumpFileFunc(GetSelectionText())<CR>
   call RequirePlugin('fzf.vimrc')
+'''
+
+[[plugins]]
+repo = 'junegunn/fzf.vim'
+hook_add = '''
+  noremap fzf :GFiles<CR>
+  nnoremap g,re :RG<CR>
+  nnoremap g,e :RG <c-r><c-w><cr>
+  vnoremap g,re :call FZGrep(GetSelectionText(), 0)<cr>
+  call RequirePlugin('ripgrep.vimrc')
 '''
 
 [[plugins]]
