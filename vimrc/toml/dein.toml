@@ -124,10 +124,6 @@ hook_add = '''
 [[plugins]]
 repo = 'junegunn/fzf.vim'
 hook_add = '''
-  noremap fzf :GFiles<CR>
-  nnoremap g,re :Rg<CR>
-  nnoremap g,e :Rg <c-r><c-w><cr>
-  vnoremap g,re :call FZGrep(GetSelectionText(), 0)<cr>
   call RequirePlugin('ripgrep.vimrc')
 '''
 
