@@ -11,6 +11,7 @@ noremap ;2C <Esc>w
 noremap <Esc>f <Esc>w
 
 noremap <F10> :<C-u>sp<CR>:e<Space>~/dotfiles/vimrc/command<CR>
+nnoremap <C-f> :let @* = expand('%')<CR>
 
 nnoremap s <Nop>
 nnoremap sj <C-w>j
