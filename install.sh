@@ -38,6 +38,10 @@ mkdir -p ~/.tmux/plugins
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 . ~/.tmux/plugins/tpm/bin/install_plugins
 
+echo "Install cargo config"
+mkdir -p ~/.cargo
+ln -s -i ~/dotfiles/cargo/config ~/.cargo/config
+
 echo "Install git config"
 cat << EOS >> ~/.gitconfig
 [include]
