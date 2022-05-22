@@ -3,6 +3,25 @@ nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 
+let g:coc_global_extensions = [
+  \'coc-html',
+  \'coc-eslint',
+  \'coc-yaml',
+  \'coc-vetur',
+  \'coc-tsserver',
+  \'coc-solargraph',
+  \'coc-rls',
+  \'coc-python',
+  \'coc-phpls',
+  \'coc-json',
+  \'coc-java',
+  \'coc-go',
+  \'coc-flutter',
+  \'coc-docker',
+  \'coc-css',
+  \'@yaegassy/coc-volar',
+\]
+
 inoremap <silent><expr> <TAB>
       \ pumvisible() ? "\<C-n>" :
       \ <SID>check_back_space() ? "\<TAB>" :
