@@ -4,6 +4,8 @@ nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 
 let g:coc_global_extensions = [
+  \'coc-stylelintplus',
+  \'coc-prettier',
   \'coc-html',
   \'coc-eslint',
   \'coc-yaml',
