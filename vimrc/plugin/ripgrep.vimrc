@@ -12,6 +12,7 @@ if executable('rg')
   endfunction
 
   noremap fzf :GFiles<CR>
+  noremap gzg :Files<CR>
   nnoremap g,re :Rg<CR>
   nnoremap g,e :call FZGrepI(expand("<cfile>"), 0)<cr>
   vnoremap g,re :call FZGrepI(GetSelectionText(), 0)<cr>

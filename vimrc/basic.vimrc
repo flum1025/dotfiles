@@ -33,6 +33,21 @@ if !has('nvim')
   set ttymouse=sgr
 endif
 
+if executable('win32yank.exe')
+  let g:clipboard = {
+      \   'name': 'myClipboard',
+      \   'copy': {
+      \      '+': 'win32yank.exe -i',
+      \      '*': 'win32yank.exe -i',
+      \    },
+      \   'paste': {
+      \      '+': 'win32yank.exe -o',
+      \      '*': 'win32yank.exe -o',
+      \   },
+      \   'cache_enabled': 1,
+      \ }
+endif
+
 autocmd InsertEnter,WinEnter * checktime
 
 let g:omni_sql_no_default_maps = 1
