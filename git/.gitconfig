@@ -1,6 +1,6 @@
 [alias]
   cof = !git branch -a | fzf | xargs git checkout
-  pushu = !git push -u origin `git name-rev --name-only HEAD`
+  pushu = !git push -u origin `git symbolic-ref --short HEAD`
   co = !git checkout
   cd = !git checkout $(git remote show origin | grep 'HEAD branch' | awk '{print $NF}')
   remote-url = !git remote get-url --all origin | sed -E 's/git@(.+):(.+).git/https:\\/\\/\\1\\/\\2/'
