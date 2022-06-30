@@ -1,6 +1,6 @@
 if executable('rg')
   function! FZGrep(query, fullscreen)
-    let command_fmt = 'rg --column --line-number --no-heading --hidden --follow --glob "!.git/*" --color=always --ignore-case -- %s || true'
+    let command_fmt = 'rg --column --hidden --line-number --no-heading --hidden --follow --glob "!.git/*" --color=always --ignore-case -- %s || true'
     let initial_command = printf(command_fmt, shellescape(a:query))
     let reload_command = printf(command_fmt, '{q}')
     let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
@@ -8,7 +8,7 @@ if executable('rg')
   endfunction
 
   function! FZGrepI(query, fullscreen)
-    call fzf#vim#grep("rg --column --line-number --no-heading --color=always --ignore-case -- ".shellescape(a:query), 1, fzf#vim#with_preview(), a:fullscreen)
+    call fzf#vim#grep("rg --column --hidden --line-number --no-heading --color=always --ignore-case -- ".shellescape(a:query), 1, fzf#vim#with_preview(), a:fullscreen)
   endfunction
 
   noremap fzf :Files<CR>
