@@ -28,6 +28,7 @@ set autoread
 set showmatch
 set startofline
 set tags=./tags;
+set cmdheight=0
 
 if !has('nvim')
   set ttymouse=sgr

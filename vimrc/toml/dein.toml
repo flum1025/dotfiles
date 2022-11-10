@@ -8,6 +8,7 @@ build = 'make'
 [[plugins]]
 repo = 'scrooloose/nerdtree'
 hook_add = '''
+  let g:NERDTreeMinimalMenu=1
   let g:NERDTreeShowHidden=1
   let g:NERDTreeWinSize = 20
   nnoremap <silent><C-e> :NERDTreeToggle<CR>
