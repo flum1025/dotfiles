@@ -22,6 +22,7 @@ let g:coc_global_extensions = [
   \'coc-docker',
   \'coc-css',
   \'@yaegassy/coc-volar',
+  \'coc-sql',
 \]
 
 inoremap <silent><expr> <TAB>
