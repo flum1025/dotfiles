@@ -1,4 +1,8 @@
 [[plugins]]
+repo = 'github/copilot.vim'
+on_i = 1
+
+[[plugins]]
 repo = 'cohama/lexima.vim'
 on_i = 1
 
