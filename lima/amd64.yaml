@@ -41,7 +41,7 @@ mounts:
   - location: "~"
     # CAUTION: `writable` SHOULD be false for the home directory.
     # Setting `writable` to true is possible, but untested and dangerous.
-    writable: false
+    writable: true
   - location: "/tmp/lima"
     writable: true
 
@@ -215,7 +215,6 @@ propagateProxyEnv: true
 # and mDNS lookup:
 # Default: true
 useHostResolver: true
-
 # If useHostResolver is false, then the following rules apply for configuring dns:
 # Explicitly set DNS addresses for qemu user-mode networking. By default qemu picks *one*
 # nameserver from the host config and forwards all queries to this server. On macOS
