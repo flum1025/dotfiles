@@ -16,7 +16,8 @@ hook_add = '''
   nnoremap <F8> :NERDTree ~/Desktop<CR>
   noremap dir :NERDTree<CR>
   nnoremap sd :<C-u>tabnew<CR>:NERDTree<CR>
-  let g:NERDTreeIgnore=['\.DS_Store$']
+  let g:NERDTreeIgnore=['\.DS_Store$','node_modules']
+  command! -nargs=0 NTF :NERDTreeFind
 '''
 
 [[plugins]]
@@ -33,7 +34,6 @@ let g:neoterm_automap_keys = ',tt'
 let g:neoterm_autoinsert = 1
 let g:neoterm_size = 25
 nnoremap <C-k> :Ttoggle<CR>
-inoremap <C-k> <ESC>:Ttoggle<CR>
 tnoremap <C-k> <C-\><C-n>:Ttoggle<CR>
 tnoremap <silent> <ESC> <C-\><C-n>
 tnoremap <silent> jj <C-\><C-n>

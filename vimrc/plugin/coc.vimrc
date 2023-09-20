@@ -13,7 +13,7 @@ let g:coc_global_extensions = [
   \'coc-tsserver',
   \'coc-solargraph',
   \'coc-rust-analyzer',
-  \'coc-python',
+  \'coc-jedi',
   \'coc-phpls',
   \'coc-json',
   \'coc-java',
@@ -41,8 +41,9 @@ nnoremap <silent> K :call <SID>show_documentation()<CR>
 
 command! -nargs=0 Format :call CocActionAsync('format')
 command! -nargs=0 OR :call CocActionAsync('runCommand', 'editor.action.organizeImport')
+command! -nargs=0 CR :CocRestart
 
-autocmd BufWritePre *.go :silent call CocAction('runCommand', 'editor.action.organizeImport')
+autocmd BufWritePre *.ts,*.js,*.py,*.rb,*.go silent! call CocAction('runCommand', 'editor.action.organizeImport')
 
 function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
