@@ -1,7 +1,7 @@
 map , <leader>
 inoremap <C-s> <Esc>:w<CR>
 noremap <C-s> :w<CR>
-noremap <silent> zzz :q!<CR>
+noremap <silent> zzz :bd!<CR>
 noremap :jq :%!jq '.'<CR>
 " Shift-Left
 noremap ;2D <Esc>b
