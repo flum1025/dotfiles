@@ -11,7 +11,6 @@ let g:coc_global_extensions = [
   \'coc-yaml',
   \'coc-vetur',
   \'coc-tsserver',
-  \'coc-solargraph',
   \'coc-rust-analyzer',
   \'coc-jedi',
   \'coc-phpls',
