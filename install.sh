@@ -53,7 +53,7 @@ if [ $? -eq 0 ]; then
   echo "Setup 'Neovim'"
   if ! which nvim >/dev/null 2>&1; then
     if [ $OS == 'Mac' ]; then
-      brew install neovim/neovim/neovim ripgrep
+      brew install neovim/neovim/neovim ripgrep watchman
     elif [ $OS == 'Linux' ]; then
       apt install -y software-properties-common
       add-apt-repository ppa:neovim-ppa/unstable
