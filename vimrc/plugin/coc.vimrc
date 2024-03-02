@@ -15,7 +15,6 @@ let g:coc_global_extensions = [
   \'coc-jedi',
   \'coc-phpls',
   \'coc-json',
-  \'coc-java',
   \'coc-go',
   \'coc-flutter',
   \'coc-docker',
