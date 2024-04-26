@@ -6,6 +6,9 @@ repo = 'Shougo/vimproc'
 build = 'make'
 
 [[plugins]]
+repo = 'nvim-lua/plenary.nvim'
+
+[[plugins]]
 repo = 'scrooloose/nerdtree'
 hook_add = '''
   let g:NERDTreeMinimalMenu=1

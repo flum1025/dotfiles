@@ -6,6 +6,32 @@ hook_add = '''
 '''
 
 [[plugins]]
+repo = 'CopilotC-Nvim/CopilotChat.nvim'
+on_i = 1
+depends = ['github/copilot.vim', 'nvim-lua/plenary.nvim']
+branch = 'canary'
+hook_add = '''
+nnoremap <leader>cc :CopilotChatToggle<CR>
+
+lua << EOF
+require("CopilotChat").setup {
+  debug = true, -- Enable debugging
+  -- See Configuration section for rest
+}
+
+function CopilotChatBuffer()
+  local input = vim.fn.input("Quick Chat: ")
+  if input ~= "" then
+    require("CopilotChat").ask(input, { selection = require("CopilotChat.select").buffer })
+  end
+end
+
+-- <leader>ccq (Copilot Chat Quick) で Copilot とチャットする
+vim.api.nvim_set_keymap("n", "<leader>ccq", "<cmd>lua CopilotChatBuffer()<cr>", { noremap = true, silent = true })
+EOF
+'''
+
+[[plugins]]
 repo = 'cohama/lexima.vim'
 on_i = 1
 
