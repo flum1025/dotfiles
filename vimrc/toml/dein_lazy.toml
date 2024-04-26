@@ -2,11 +2,7 @@
 repo = 'github/copilot.vim'
 on_i = 1
 hook_add = '''
-  imap <silent><script><expr> <C-b> copilot#Accept("\<CR>")
-  imap <silent><script><expr> <C-j> copilot#Next()
-  imap <silent><script><expr> <C-k> copilot#Previous()
-
-  let g:copilot_no_tab_map = v:true
+  call RequirePlugin('copilot.vimrc')
 '''
 
 [[plugins]]

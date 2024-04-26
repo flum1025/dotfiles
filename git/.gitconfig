@@ -1,4 +1,5 @@
 [alias]
+  ac = !"git commit -v -e"
   cof = !git branch -a | fzf | xargs git checkout
   pushu = !git push -u origin `git symbolic-ref --short HEAD`
   co = !git checkout
