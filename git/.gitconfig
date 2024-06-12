@@ -7,11 +7,7 @@
   remote-url = !git remote get-url --all origin | sed -E 's/git@(.+):(.+).git/https:\\/\\/\\1\\/\\2/'
   open = !open $(git remote-url)
   create-pr = !open $(git remote-url)/compare/$(git show-branch | grep '*' | grep -v "$(git rev-parse --abbrev-ref HEAD)" | head -1 | awk -F'[]~^[]' '{print $2}')...$(git rev-parse --abbrev-ref HEAD)
-  find-merge = "!sh -c 'commit=$0 && branch=${1:-HEAD} && (git rev-list $commit..$branch --ancestry-path | cat -n; git rev-list $commit..$branch --first-parent | cat -n) | sort -k2 -s | uniq -f1 -d | sort -n | tail -1 | cut -f2'"
-  show-merge = "!sh -c 'merge=$(git find-merge $0 $1) && [ -n \"$merge\" ] && git show $merge'"
-  show-merge-commit = !"f() { git log --merges --oneline --reverse --ancestry-path $1...master | grep 'Merge pull request #' | head -n 1; }; f"
-  show-merge-pr-number = !"f() { git show-merge-commit $1 | sed -r 's/.*Merge pull request #([0-9]+).*/\\1/'; }; f"
-  showpr = !"f() { open $(git remote-url)/pull/$(git show-merge-pr-number $1); }; f"
+  showpr = !"gh pr list --state all --web --search"
   clean-branches = !git branch --merged develop | grep -vE '^\\*|\\<master\\>|\\<develop\\>' | xargs -I % git branch -d %
 [url "git@github.com:"]
   insteadOf = https://github.com/
