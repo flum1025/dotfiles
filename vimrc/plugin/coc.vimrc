@@ -20,6 +20,7 @@ let g:coc_global_extensions = [
   \'coc-docker',
   \'coc-css',
   \'@yaegassy/coc-volar',
+  \'coc-sql',
 \]
 
 function! s:check_back_space() abort
