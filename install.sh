@@ -67,20 +67,6 @@ if [ $? -eq 0 ]; then
   echo "Install vim config"
   mkdir -p ${HOME}/.config/nvim/
   ln -s -i ~/dotfiles/vimrc/.vimrc ${HOME}/.config/nvim/init.vim
-else
-  echo "Setup 'Vim'"
-  if ! which vim >/dev/null 2>&1; then
-    if [ $OS == 'Mac' ]; then
-      brew install vim --with-lua
-    elif [ $OS == 'Linux' ]; then
-      apt install -y vim-gnome
-    fi
-  else
-    echo "Already installed 'Vim'"
-  fi
-
-  echo "Install vim config"
-  ln -s -i ~/dotfiles/vimrc/.vimrc ~
 fi
 
 askYesOrNo "Do you want to use 'zsh'?"
