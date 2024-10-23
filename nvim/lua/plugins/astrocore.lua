@@ -20,6 +20,18 @@ return {
       n = {
         ["]b"] = { function() require("astrocore.buffer").nav(vim.v.count1) end, desc = "Next buffer" },
         ["[b"] = { function() require("astrocore.buffer").nav(-vim.v.count1) end, desc = "Previous buffer" },
+        ["<leader>fo"] = {
+          function()
+            require("telescope.builtin").oldfiles {
+              cwd_only = true,
+            }
+          end,
+          desc = "Find recent files (current dir)",
+        },
+        ["<leader>tr"] = {
+          function() require("astrocore").toggle_term_cmd "irb" end,
+          desc = "ToggleTerm ruby",
+        },
         [":jq"] = { ":%!jq '.'<CR>", desc = "Format JSON with jq" },
         ["<leader>yp"] = {
           function()

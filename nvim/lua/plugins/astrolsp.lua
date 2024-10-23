@@ -4,6 +4,12 @@ return {
   ---@type AstroLSPOpts
   opts = {
     ---@diagnostic disable: missing-fields
+    formatting = {
+      format_on_save = {
+        enabled = true,
+      },
+      timeout_ms = 5000,
+    },
     config = {
       golangci_lint_ls = {
         cmd = { "go", "run", "github.com/nametake/golangci-lint-langserver@latest", "-debug" },
@@ -19,11 +25,30 @@ return {
           },
         },
       },
+      ts_ls = {
+        filetypes = {
+          "javascript",
+          "javascriptreact",
+          "typescript",
+          "typescriptreact",
+          "vue",
+        },
+        root_dir = require("lspconfig").util.root_pattern { "package.json", "node_modules" },
+        init_options = {
+          plugins = {
+            {
+              name = "@vue/typescript-plugin",
+              location = vim.fn.expand "$HOME/.local/share/nvim/mason/packages/vue-language-server/node_modules/@vue/language-server",
+              languages = { "javascript", "typescript", "vue" },
+            },
+          },
+        },
+      },
       volar = {
         filetypes = { "vue" },
         init_options = {
           vue = {
-            hybridMode = false,
+            hybridMode = true,
           },
         },
       },
