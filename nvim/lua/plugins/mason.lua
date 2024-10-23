@@ -14,6 +14,7 @@ return {
         "vtsls",
         "volar",
         "html",
+        "graphql",
         "yamlls",
         "terraformls",
         "rust_analyzer",

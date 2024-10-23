@@ -52,6 +52,9 @@ return {
           },
         },
       },
+      graphql = {
+        filetypes = { "graphql", "vue" },
+      },
     },
   },
 }
