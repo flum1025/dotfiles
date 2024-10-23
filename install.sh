@@ -65,8 +65,7 @@ if [ $? -eq 0 ]; then
   fi
 
   echo "Install vim config"
-  mkdir -p ${HOME}/.config/nvim/
-  ln -s -i ~/dotfiles/vimrc/.vimrc ${HOME}/.config/nvim/init.vim
+  ln -s -i ~/dotfiles/nvim ${HOME}/.config/nvim
 fi
 
 askYesOrNo "Do you want to use 'zsh'?"
