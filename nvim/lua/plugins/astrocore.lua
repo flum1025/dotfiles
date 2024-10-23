@@ -82,6 +82,15 @@ return {
         ["sQ"] = { "<cmd>bd<CR>", desc = "Close buffer" },
         ["<leader>fz"] = { ":Neotree reveal<CR>", desc = "Reveal file in Neotree" },
       },
+      v = {
+        -- disable avante keymaps
+        ["co"] = { "<Nop>" },
+        ["ct"] = { "<Nop>" },
+        ["ca"] = { "<Nop>" },
+        ["c0"] = { "<Nop>" },
+        ["cb"] = { "<Nop>" },
+        ["cc"] = { "c" },
+      },
     },
   },
 }
