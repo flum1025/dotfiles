@@ -66,6 +66,7 @@ if [ $? -eq 0 ]; then
 
   echo "Install vim config"
   ln -s -i ~/dotfiles/nvim ${HOME}/.config/nvim
+  ln -s -i ~/dotfiles/lazygit/config.yml ~/Library/Application\ Support/lazygit/config.yml
 fi
 
 askYesOrNo "Do you want to use 'zsh'?"
