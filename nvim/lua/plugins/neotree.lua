@@ -18,6 +18,12 @@ return {
               renderer.focus_node(state, parent_node:get_id())
             end,
             ["T"] = { "toggle_preview", config = { use_float = true } },
+            ["o"] = function(state)
+              local node = state.tree:get_node()
+              local path = node:get_id()
+
+              vim.fn.jobstart({ "open", path }, { detach = true })
+            end,
           },
         },
         filtered_items = {
