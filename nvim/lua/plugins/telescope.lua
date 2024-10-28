@@ -12,6 +12,13 @@ return {
           i = {
             ["<C-n>"] = actions.cycle_history_next,
             ["<C-p>"] = actions.cycle_history_prev,
+            ["<C-u>"] = function()
+              local current_line = vim.fn.getline "."
+              local new_line = current_line:sub(1, #current_line - #current_line)
+              vim.fn.setline(".", new_line)
+            end,
+            ["<C-a>"] = function() vim.fn.cursor(0, 0) end,
+            ["<C-e>"] = function() vim.fn.cursor(0, vim.fn.col "$") end,
           },
         },
       })
