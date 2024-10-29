@@ -14,6 +14,7 @@ return {
         showbreak = "↳ ",
         whichwrap = "b,s,h,l,<,>,[,]",
         startofline = true,
+        hlsearch = true,
       },
     },
     mappings = {
