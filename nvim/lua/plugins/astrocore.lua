@@ -83,6 +83,9 @@ return {
         ["sQ"] = { "<cmd>bd<CR>", desc = "Close buffer" },
         ["<leader>fz"] = { ":Neotree reveal<CR>", desc = "Reveal file in Neotree" },
       },
+      i = {
+        ["<S-Tab>"] = { "<C-d>", desc = "Unindent line" },
+      },
       v = {
         -- disable avante keymaps
         ["co"] = { "<Nop>" },

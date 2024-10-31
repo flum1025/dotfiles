@@ -5,7 +5,6 @@ return {
       pattern = "gitcommit",
       once = true,
       callback = function()
-        vim.notify("callback", vim.log.levels.INFO)
         local chat = require "CopilotChat"
         chat.open()
         chat.ask(
