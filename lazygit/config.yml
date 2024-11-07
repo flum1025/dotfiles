@@ -3,9 +3,6 @@ os:
 gui:
   nerdFontsVersion: "3"
 customCommands:
-  - key: "o"
-    context: "global"
-    command: "git open"
   - key: "p"
     context: "global"
     command: "git create-pr"
