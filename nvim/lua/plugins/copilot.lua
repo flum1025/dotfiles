@@ -18,6 +18,7 @@ return {
         gitcommit = true,
         markdown = true,
         text = true,
+        yaml = true,
       },
       panel = { enabled = false },
     },
