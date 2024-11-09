@@ -55,6 +55,17 @@ return {
 
       vim.keymap.set(
         "n",
+        "<leader>fo",
+        function()
+          require("telescope.builtin").oldfiles {
+            cwd_only = true,
+          }
+        end,
+        { desc = "Find recent files (current dir)" }
+      )
+
+      vim.keymap.set(
+        "n",
         "<leader>fl",
         function() require("telescope").extensions.live_grep_args.live_grep_args() end,
         { desc = "Live grep" }
