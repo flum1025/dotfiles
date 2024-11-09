@@ -17,6 +17,9 @@ return {
         ignorecase = false,
         smartcase = false,
       },
+      g = {
+        omni_sql_no_default_maps = false,
+      },
     },
     mappings = {
       n = {

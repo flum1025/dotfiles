@@ -7,6 +7,8 @@ return {
     "nvim-telescope/telescope.nvim",
     opts = function(_, opts)
       local actions = require "telescope.actions"
+      local lga_actions = require "telescope-live-grep-args.actions"
+
       opts.defaults = vim.tbl_deep_extend("force", opts.defaults or {}, {
         mappings = {
           i = {
@@ -19,6 +21,17 @@ return {
             end,
             ["<C-a>"] = function() vim.fn.cursor(0, 0) end,
             ["<C-e>"] = function() vim.fn.cursor(0, vim.fn.col "$") end,
+          },
+        },
+      })
+      opts.extensions = vim.tbl_deep_extend("force", opts.extensions or {}, {
+        live_grep_args = {
+          auto_quoting = true,
+          mappings = {
+            i = {
+              ["<C-k>"] = lga_actions.quote_prompt(),
+              ["<C-G><C-G>"] = actions.to_fuzzy_refine,
+            },
           },
         },
       })
@@ -40,33 +53,31 @@ return {
       -- ファイル検索コマンドをripgrepに設定
       vim.env.FZF_DEFAULT_COMMAND = "rg --files -uu"
 
-      function get_visual_selection()
-        local s_start = vim.fn.getpos "'<"
-        local s_end = vim.fn.getpos "'>"
-        local n_lines = math.abs(s_end[2] - s_start[2]) + 1
-        local lines = vim.api.nvim_buf_get_lines(0, s_start[2] - 1, s_end[2], false)
-        lines[1] = string.sub(lines[1], s_start[3], -1)
-        if n_lines == 1 then
-          lines[n_lines] = string.sub(lines[n_lines], 1, s_end[3] - s_start[3] + 1)
-        else
-          lines[n_lines] = string.sub(lines[n_lines], 1, s_end[3])
-        end
-        return table.concat(lines, "\n")
-      end
-
       vim.keymap.set(
         "n",
         "<leader>fl",
-        ":lua require('telescope').extensions.live_grep_args.live_grep_args()<CR>",
+        function() require("telescope").extensions.live_grep_args.live_grep_args() end,
         { desc = "Live grep" }
       )
-      vim.keymap.set("n", "g,re", ":lua require('telescope.builtin').grep_string()<CR>", { desc = "Live grep" })
-      vim.keymap.set(
-        "v",
-        "g,re",
-        ":lua require('telescope.builtin').grep_string({ search = get_visual_selection() })<CR>",
-        { desc = "Live grep" }
-      )
+
+      vim.keymap.set("n", "g,re", function() require("telescope.builtin").grep_string() end, { desc = "Live grep" })
+
+      vim.keymap.set("v", "g,re", function()
+        function get_visual_selection()
+          local s_start = vim.fn.getpos "'<"
+          local s_end = vim.fn.getpos "'>"
+          local n_lines = math.abs(s_end[2] - s_start[2]) + 1
+          local lines = vim.api.nvim_buf_get_lines(0, s_start[2] - 1, s_end[2], false)
+          lines[1] = string.sub(lines[1], s_start[3], -1)
+          if n_lines == 1 then
+            lines[n_lines] = string.sub(lines[n_lines], 1, s_end[3] - s_start[3] + 1)
+          else
+            lines[n_lines] = string.sub(lines[n_lines], 1, s_end[3])
+          end
+          return table.concat(lines, "\n")
+        end
+        require("telescope.builtin").grep_string { search = get_visual_selection() }
+      end, { desc = "Live grep" })
     end,
   },
 }
