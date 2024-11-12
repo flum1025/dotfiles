@@ -6,3 +6,14 @@ end
 vim.api.nvim_create_autocmd("VimEnter", {
   callback = load_project_config,
 })
+
+function _G.set_terminal_keymaps()
+  local opts = { buffer = 0 }
+  vim.keymap.set("t", "<esc>", [[<C-\><C-n>]], opts)
+  vim.keymap.set("t", "<C-w>", [[<C-\><C-n><C-w>]], opts)
+end
+
+vim.api.nvim_create_autocmd("TermOpen", {
+  pattern = "term://*",
+  callback = function() _G.set_terminal_keymaps() end,
+})
