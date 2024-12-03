@@ -8,6 +8,7 @@ return {
       format_on_save = {
         enabled = true,
       },
+      disabled = { "volar" },
       timeout_ms = 5000,
     },
     config = {

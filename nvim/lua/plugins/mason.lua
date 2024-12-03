@@ -6,10 +6,8 @@ return {
     opts = {
       ensure_installed = {
         "lua_ls",
-        "eslint",
         "golangci_lint_ls",
         "gopls",
-        "stylelint_lsp",
         "ts_ls",
         "vtsls",
         "volar",
@@ -30,9 +28,11 @@ return {
     "jay-babu/mason-null-ls.nvim",
     opts = {
       ensure_installed = {
+        "stylelint",
         "stylua",
         "prettier",
         "trivy",
+        "eslint_d",
       },
     },
   },
