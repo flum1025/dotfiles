@@ -1,0 +1,45 @@
+[window]
+padding = { x = 10, y = 10 }
+decorations = "full"
+startup_mode = "Windowed"
+
+[env]
+TERM = "xterm-256color"
+
+[font]
+normal = { family = "Hack Nerd Font Mono", style = "Regular" }
+size = 15.0
+
+[scrolling]
+history = 10000
+
+[colors.primary]
+background = "#002B36"
+foreground = "#839496"
+
+[colors.normal]
+black = "#002B36"
+red = "#DC322F"
+green = "#859900"
+yellow = "#B58900"
+blue = "#268BD2"
+magenta = "#D33682"
+cyan = "#2AA198"
+white = "#EEE8D5"
+
+[colors.bright]
+black = "#073642"
+red = "#CB4B16"
+green = "#586E75"
+yellow = "#657B83"
+blue = "#839496"
+magenta = "#6C71C4"
+cyan = "#93A1A1"
+white = "#FDF6E3"
+
+[keyboard]
+bindings = [
+  { key = "Left",  mods = "Alt",     chars = "\u001bB"   },
+  { key = "Right", mods = "Alt",     chars = "\u001bF"   },
+  { key = "Return", mods = "Command", action = "ToggleFullscreen" }
+]

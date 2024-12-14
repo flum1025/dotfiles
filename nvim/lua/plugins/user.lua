@@ -36,15 +36,9 @@ return {
     end,
   },
   {
-    "Vonr/align.nvim",
-    keys = {
-      {
-        "ga",
-        function() require("align").align_to_string(false, true, true) end,
-        mode = "x",
-        desc = "Align to string",
-      },
-    },
+    "echasnovski/mini.align",
+    version = "*",
+    init = function() require("mini.align").setup() end,
   },
   {
     "AndrewRadev/switch.vim",
