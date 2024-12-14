@@ -37,9 +37,13 @@ magenta = "#6C71C4"
 cyan = "#93A1A1"
 white = "#FDF6E3"
 
+[mouse]
+hide_when_typing = true
+
 [keyboard]
 bindings = [
   { key = "Left",  mods = "Alt",     chars = "\u001bB"   },
   { key = "Right", mods = "Alt",     chars = "\u001bF"   },
-  { key = "Return", mods = "Command", action = "ToggleFullscreen" }
+  { key = "Return", mods = "Command", action = "ToggleFullscreen" },
+  { key = "N", mods = "Command", action = "SpawnNewInstance" }
 ]
