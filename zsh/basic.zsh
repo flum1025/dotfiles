@@ -8,6 +8,8 @@ HISTSIZE=100000
 SAVEHIST=100000
 setopt extended_history #ヒストリに実行時間も保存
 setopt hist_ignore_dups #直前と同じコマンドはヒストリに追加しない
+setopt share_history
+setopt hist_ignore_all_dups
 
 setopt nonomatch #勝手ファイル名として解析されるのを防ぐ
 
