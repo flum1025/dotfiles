@@ -5,14 +5,6 @@ return {
     enabled = true,
   },
   {
-    "keaising/im-select.nvim",
-    config = function()
-      require("im_select").setup {
-        set_previous_events = {},
-      }
-    end,
-  },
-  {
     "thinca/vim-quickrun",
     config = function() vim.api.nvim_set_keymap("n", "<Leader>r", "<Plug>(quickrun)", {}) end,
   },
