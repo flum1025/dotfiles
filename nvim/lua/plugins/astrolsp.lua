@@ -8,6 +8,7 @@ return {
       format_on_save = {
         enabled = true,
       },
+      async = true,
       disabled = { "volar" },
       timeout_ms = 5000,
     },
@@ -42,6 +43,22 @@ return {
               location = vim.fn.expand "$HOME/.local/share/nvim/mason/packages/vue-language-server/node_modules/@vue/language-server",
               languages = { "javascript", "typescript", "vue" },
             },
+          },
+        },
+      },
+      eslint = {
+        on_attach = function(client, bufnr)
+          vim.api.nvim_create_autocmd("BufWritePre", {
+            buffer = bufnr,
+            command = "EslintFixAll",
+          })
+        end,
+      },
+      stylelint_lsp = {
+        settings = {
+          stylelintplus = {
+            autoFixOnFormat = true,
+            autoFixOnSave = true,
           },
         },
       },

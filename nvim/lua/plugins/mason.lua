@@ -21,6 +21,8 @@ return {
         "dockerls",
         "sqlls",
         "cssls",
+        -- "eslint",
+        -- "stylelint_lsp",
       },
     },
   },
