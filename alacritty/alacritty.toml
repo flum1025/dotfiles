@@ -2,6 +2,7 @@
 padding = { x = 10, y = 10 }
 decorations = "full"
 startup_mode = "Windowed"
+option_as_alt = "Both"
 
 [env]
 TERM = "xterm-256color"
