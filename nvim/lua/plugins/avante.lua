@@ -100,22 +100,22 @@ return {
     rag_service = {
       enabled = true,
     },
-    bedrock = {
-      model = "us.anthropic.claude-3-7-sonnet-20250219-v1:0",
-      timeout = 30000, -- Timeout in milliseconds
-      thinking = {
-        type = "enabled",
-        budget_tokens = 16000,
-      },
-      temperature = 1,
-      max_tokens = 20000,
-    },
     -- bedrock = {
     --   model = "us.anthropic.claude-3-7-sonnet-20250219-v1:0",
     --   timeout = 30000, -- Timeout in milliseconds
-    --   temperature = 0,
-    --   max_tokens = 8000,
+    --   thinking = {
+    --     type = "enabled",
+    --     budget_tokens = 16000,
+    --   },
+    --   temperature = 1,
+    --   max_tokens = 20000,
     -- },
+    bedrock = {
+      model = "us.anthropic.claude-3-7-sonnet-20250219-v1:0",
+      timeout = 30000, -- Timeout in milliseconds
+      temperature = 0,
+      max_tokens = 8000,
+    },
     -- mappings = {
     --   suggestion = {
     --     accept = "<C-b>",
