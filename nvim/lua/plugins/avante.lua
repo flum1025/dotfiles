@@ -87,6 +87,7 @@ return {
     -- provider = "copilot",
     provider = "bedrock",
     auto_suggestions_provider = "copilot",
+    cursor_applying_provider = "copilot",
     copilot = {
       model = "claude-3.7-sonnet",
     },
@@ -98,7 +99,7 @@ return {
       provider = "google",
     },
     rag_service = {
-      enabled = true,
+      enabled = false,
     },
     -- bedrock = {
     --   model = "us.anthropic.claude-3-7-sonnet-20250219-v1:0",
