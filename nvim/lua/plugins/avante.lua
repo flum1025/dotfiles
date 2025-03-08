@@ -2,6 +2,10 @@
 return {
   "yetone/avante.nvim",
   init = function()
+    vim.keymap.set("n", "<Leader>ac", ":AvanteChat<CR>", { desc = "AvanteChat" })
+    vim.keymap.set("n", "<Leader>aa", ":AvanteAsk<CR>", { desc = "AvanteAsk" })
+    vim.keymap.set("n", "<Leader>at", ":AvanteToggle<CR>", { desc = "AvanteToggle" })
+
     local env_get_command = os.getenv "ENV_GET_COMMAND" or ""
 
     local function exec_command_async(cmd, callback)
