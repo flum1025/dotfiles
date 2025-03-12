@@ -25,6 +25,16 @@ return {
       n = {
         ["]b"] = { function() require("astrocore.buffer").nav(vim.v.count1) end, desc = "Next buffer" },
         ["[b"] = { function() require("astrocore.buffer").nav(-vim.v.count1) end, desc = "Previous buffer" },
+        ["<leader>tc"] = {
+          function()
+            require("astrocore").toggle_term_cmd {
+              cmd = os.getenv "CLAUDE_CODE_CMD",
+              persist_size = true,
+              direction = "float",
+            }
+          end,
+          desc = "ToggleTerm claude code",
+        },
         ["<leader>tr"] = {
           function() require("astrocore").toggle_term_cmd "irb" end,
           desc = "ToggleTerm ruby",
