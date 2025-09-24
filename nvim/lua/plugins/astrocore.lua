@@ -30,7 +30,7 @@ return {
             require("astrocore").toggle_term_cmd {
               cmd = os.getenv "CLAUDE_CODE_CMD",
               persist_size = true,
-              direction = "float",
+              direction = "horizontal",
             }
           end,
           desc = "ToggleTerm claude code",

@@ -17,3 +17,6 @@ end
 
 require "lazy_setup"
 require "polish"
+
+vim.opt.list = true
+vim.opt.listchars:append "tab:»·,space:-"
