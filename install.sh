@@ -48,11 +48,16 @@ cat << EOS >> ~/.gitconfig
   path = ~/dotfiles/git/.gitconfig
 EOS
 
-
-askYesOrNo "Do you want to use 'Neovim'?"
+askYesOrNo "Do you want to use 'alacritty'?"
 if [ $? -eq 0 ]; then
   mkdir -p ~/.config/alacritty
   ln -s -i ~/dotfiles/alacritty/alacritty.toml ~/.config/alacritty/alacritty.toml
+fi
+
+askYesOrNo "Do you want to use 'claude-code'?"
+if [ $? -eq 0 ]; then
+  mkdir -p ~/..claude
+  ln -s -i ~/dotfiles/claude/settings.json ~/.claude/settings.json
 fi
 
 askYesOrNo "Do you want to use 'Neovim'?"
