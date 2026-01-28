@@ -41,6 +41,9 @@ white = "#FDF6E3"
 [mouse]
 hide_when_typing = true
 
+[bell]
+command = { program = "osascript", args = ["-e", "beep"] }
+
 [keyboard]
 bindings = [
   { key = "Left",  mods = "Alt",     chars = "\u001bB"   },

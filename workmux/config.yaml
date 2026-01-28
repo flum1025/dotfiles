@@ -1,0 +1,16 @@
+window_prefix: "\uf418 "
+merge_strategy: merge
+agent: claude
+
+status_icons:
+  working: "🤖"
+  waiting: "💬"
+  done: "✅"
+
+panes:
+  - command: claude
+    focus: true
+  - command: nvim
+    split: horizontal
+  - command: zsh
+    split: vertical

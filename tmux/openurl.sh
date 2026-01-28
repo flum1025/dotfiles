@@ -1,0 +1,1 @@
+tmux capture-pane -J -p | grep -oE '(https?):\/\/[^"'\'' <>]+' | fzf-tmux -d20 --multi --bind alt-a:select-all,alt-d:deselect-all | xargs open

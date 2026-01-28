@@ -56,8 +56,14 @@ fi
 
 askYesOrNo "Do you want to use 'claude-code'?"
 if [ $? -eq 0 ]; then
-  mkdir -p ~/..claude
+  mkdir -p ~/.claude
   ln -s -i ~/dotfiles/claude/settings.json ~/.claude/settings.json
+fi
+
+askYesOrNo "Do you want to use 'workmux'?"
+if [ $? -eq 0 ]; then
+  mkdir -p ~/.config/workmux
+  ln -s -i ~/dotfiles/workmux/config.yaml ~/.config/workmux/config.yaml
 fi
 
 askYesOrNo "Do you want to use 'Neovim'?"
