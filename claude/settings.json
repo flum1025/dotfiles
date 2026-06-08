@@ -156,6 +156,10 @@
       "Write(/etc/passwd)",
       "Write(/etc/shadow)",
       "Write(/etc/sudoers)"
+    ],
+    "defaultMode": "auto",
+    "additionalDirectories": [
+      "~/.maestro/tests"
     ]
   },
   "hooks": {
@@ -184,8 +188,14 @@
   },
   "enabledPlugins": {
     "clangd-lsp@claude-plugins-official": true,
-    "code-simplifier@claude-plugins-official": true
+    "code-simplifier@claude-plugins-official": true,
+    "swift-lsp@claude-plugins-official": true,
+    "frontend-design@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true,
+    "figma@claude-plugins-official": true
   },
   "alwaysThinkingEnabled": true,
-  "preferredNotifChannel": "terminal_bell"
+  "skipAutoPermissionPrompt": true,
+  "preferredNotifChannel": "terminal_bell",
+  "model": "sonnet"
 }
