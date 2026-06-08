@@ -61,13 +61,13 @@ return {
         prompt = "コードの診断結果に従って問題を修正してください。修正内容の説明は日本語でお願いします。",
         mapping = "<leader>cd",
         description = "コードの修正をお願いする",
-        selection = require("CopilotChat.select").diagnostics,
+        selection = function(source) return require("CopilotChat.select").diagnostics(source) end,
       },
       Commit = {
         prompt = "実装差分に対するコミットメッセージを日本語で記述してください。",
         mapping = "<leader>cco",
         description = "コミットメッセージの作成をお願いする",
-        selection = require("CopilotChat.select").gitdiff,
+        selection = function(source) return require("CopilotChat.select").gitdiff(source) end,
       },
       CommitStaged = {
         prompt = "ステージ済みの変更に対するコミットメッセージを日本語で記述してください。",
