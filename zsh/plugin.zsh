@@ -27,3 +27,5 @@ fi
 
 # Then, source plugins and add commands to $PATH
 zplug load
+
+compdef __enhancd::cd=cd
