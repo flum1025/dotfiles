@@ -40,6 +40,7 @@ baked_registry = true
 [dotfiles]
 "~/.config/mise/config.toml" = {}                             # 自己管理
 "~/.zshrc" = {}
+"~/.zprofile" = {}
 "~/.tmux.conf" = {}
 "~/.cargo/config" = {}
 "~/.claude/settings.json" = {}
@@ -49,6 +50,8 @@ baked_registry = true
 "~/.config/alacritty/alacritty.toml" = {}
 "~/.config/workmux/config.yaml" = {}
 "~/.config/nvim" = {}                                        # dir 丸ごと symlink(ソース: .config/nvim)
+"~/.config/karabiner/karabiner.json" = {}
+"~/.config/karabiner/assets/complex_modifications" = {}      # カスタムルールのみ(automatic_backups は非追跡)
 # lazygit は macOS のみ(~/Library)。Linux では別途 ~/.config/lazygit を用意する
 "~/Library/Application Support/lazygit/config.yml" = {}
 
