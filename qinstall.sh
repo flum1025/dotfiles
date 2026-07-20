@@ -29,9 +29,11 @@ if ! command -v mise >/dev/null 2>&1; then
 fi
 export PATH="$HOME/.local/bin:$PATH"
 
-# --- リポジトリ取得 ---
+# --- リポジトリ取得 / 更新 ---
 if [ ! -d "$DOTDIR/.git" ]; then
   git clone "$REPO_HTTPS" "$DOTDIR"
+else
+  git -C "$DOTDIR" pull --ff-only || true
 fi
 
 # --- グローバル config を seed(mise に [dotfiles]/[bootstrap]/[tools] を読ませる) ---

@@ -60,23 +60,12 @@ baked_registry = true
 # ログインシェルを zsh に(macOS は標準搭載。Linux では要 apt 導入)
 login_shell = "/bin/zsh"
 
-# mise で入らない(registry になし)ツールと GUI/cask。brew(macOS)で導入。
-[bootstrap.packages]
-"brew:git" = "latest"
-"brew:curl" = "latest"
-"brew:bash" = "latest"
-"brew:pinentry-mac" = "latest"       # GPG 署名のパスフレーズ入力
-"brew:tree" = "latest"
-"brew:htop" = "latest"
-"brew:nmap" = "latest"
-"brew:bitwarden-cli" = "latest"
-"brew:translate-shell" = "latest"
-"brew:pwgen" = "latest"
-"brew:watch" = "latest"
-"brew-cask:font-hack-nerd-font" = "latest"
-"brew-cask:1password-cli" = "latest"
-"brew-cask:gcloud-cli" = "latest"
-"brew-cask:datadog-agent" = "latest"
-"brew-cask:copilot-cli" = "latest"
-"brew-cask:mitmproxy" = "latest"
-"brew-cask:android-platform-tools" = "latest"
+# brew 系は実 Homebrew に任せる(mise の brew-cask は installer 型 cask を扱えず、
+# brew: も独自の場所に入れて brew --prefix を壊すため)。Brewfile を brew bundle で適用。
+[bootstrap.hooks.post-packages]
+run = """
+if [ "$(uname)" = "Darwin" ]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+  brew bundle --file="$HOME/dotfiles/Brewfile"
+fi
+"""
