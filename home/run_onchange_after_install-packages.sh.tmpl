@@ -10,9 +10,9 @@ if ! command -v mise >/dev/null 2>&1; then
   export PATH="$HOME/.local/bin:$PATH"
 fi
 
-# --- dotfiles管理ツールの導入(両OS共通) ---
+# --- mise 管理ツールの導入(両OS共通) ---
 echo "Installing tools via mise..."
-mise install ripgrep jq
+mise install
 
 {{ if eq .chezmoi.os "linux" -}}
 # --- zsh(Linux は apt。macOS は標準搭載のため何もしない) ---
