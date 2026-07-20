@@ -6,6 +6,7 @@ age = "latest"
 aws-vault = "latest"
 awscli = { version = "latest", symlink_bins = "true" }
 bottom = "latest"
+fnox = "latest"            # 機密管理(Parameter Store / Bitwarden)。実体は github:jdx/fnox
 fzf = "latest"
 gdu = "latest"
 gh = "latest"
