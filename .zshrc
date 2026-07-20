@@ -6,4 +6,5 @@ source ~/.config/zsh/alias.zsh
 
 source ~/.config/zsh/plugin.zsh
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+# fzf(mise 管理)。最新 fzf のシェル統合を読み込む
+command -v fzf >/dev/null && source <(fzf --zsh)

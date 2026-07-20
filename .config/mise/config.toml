@@ -6,6 +6,7 @@ age = "latest"
 aws-vault = "latest"
 awscli = { version = "latest", symlink_bins = "true" }
 bottom = "latest"
+fzf = "latest"
 gdu = "latest"
 gh = "latest"
 grpcurl = "latest"
