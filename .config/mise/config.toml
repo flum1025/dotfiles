@@ -2,10 +2,13 @@
 # 言語ランタイムや各アプリ固有のツールは、各リポジトリの .mise.toml で管理する方針。
 [tools]
 age = "latest"
+bun = "latest"             # npm バックエンドの package_manager(下記 settings.npm)。npm:* ツールの導入に必要
 "aqua:neovim/neovim" = "latest"
 aws-vault = "latest"
 awscli = { version = "latest", symlink_bins = "true" }
 bottom = "latest"
+container = "latest"       # Apple のコンテナ CLI(aqua:apple/container)。macOS(Apple Silicon)専用。署名済み .pkg を展開して bin: container を露出
+"github:Mcrich23/Container-Compose" = { version = "latest", exe = "container-compose" }  # Apple container を docker-compose.yml で扱う。aqua 未登録のため github バックエンドで GitHub リリースバイナリを取得。bin: container-compose
 fnox = "latest"            # 機密管理(Parameter Store / Bitwarden)。実体は github:jdx/fnox
 fzf = "latest"
 gdu = "latest"
@@ -15,6 +18,8 @@ jq = "latest"
 "aqua:mike-engel/jwt-cli" = "latest"
 lazygit = "latest"
 ripgrep = "latest"
+"pipx:serena-agent" = { version = "latest", uvx_args = "--python 3.13" }  # コーディングエージェント用 MCP サーバ(oraios/serena)。uvx=true 設定により uv tool 経由。pydantic V1 が Python 3.14+ 非互換のため 3.13 に固定(公式推奨)
+"npm:@playwright/mcp" = "latest"  # Playwright MCP サーバ。bin: playwright-mcp(npx @playwright/mcp@latest 相当)
 sshuttle = "latest"
 tmux = "latest"
 "ubi:sorah/mairu" = "latest"
