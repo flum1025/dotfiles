@@ -60,9 +60,10 @@ baked_registry = true
 # ログインシェルを zsh に(macOS は標準搭載。Linux では要 apt 導入)
 login_shell = "/bin/zsh"
 
-# brew 系は実 Homebrew に任せる(mise の brew-cask は installer 型 cask を扱えず、
-# brew: も独自の場所に入れて brew --prefix を壊すため)。Brewfile を brew bundle で適用。
-[bootstrap.hooks.post-packages]
+# brew 系は実 Homebrew に一本化(mise の brew-cask は installer 型 cask=gcloud/datadog を
+# 扱えない。formula は /opt/homebrew に入るので結果は同じ)。Brewfile を brew bundle で適用。
+# final フック = bootstrap の最後に必ず実行される(packages フェーズの有無に依存しない)。
+[bootstrap.hooks.final]
 run = """
 if [ "$(uname)" = "Darwin" ]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
