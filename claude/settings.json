@@ -196,6 +196,5 @@
   },
   "alwaysThinkingEnabled": true,
   "skipAutoPermissionPrompt": true,
-  "preferredNotifChannel": "terminal_bell",
-  "model": "sonnet"
+  "preferredNotifChannel": "terminal_bell"
 }

@@ -2,7 +2,7 @@
 return {
   {
     "goolord/alpha-nvim",
-    enabled = true,
+    enabled = false,
   },
   {
     "thinca/vim-quickrun",

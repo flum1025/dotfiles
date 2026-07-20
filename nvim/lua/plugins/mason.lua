@@ -1,8 +1,7 @@
 ---@type LazySpec
 return {
   {
-    "williamboman/mason-lspconfig.nvim",
-    commit = "dc00bb5910805744811647373ef1e6db9c9f8a6e",
+    "mason-org/mason-lspconfig.nvim",
     opts = {
       ensure_installed = {
         "lua_ls",
@@ -21,13 +20,11 @@ return {
         "dockerls",
         "sqlls",
         "cssls",
-        -- "eslint",
-        -- "stylelint_lsp",
       },
     },
   },
   {
-    "jay-babu/mason-null-ls.nvim",
+    "WhoIsSethDaniel/mason-tool-installer.nvim",
     opts = {
       ensure_installed = {
         "stylelint",
@@ -35,14 +32,7 @@ return {
         "prettier",
         "trivy",
         "eslint_d",
-      },
-    },
-  },
-  {
-    "jay-babu/mason-nvim-dap.nvim",
-    opts = {
-      ensure_installed = {
-        "python",
+        "debugpy",
       },
     },
   },
