@@ -16,6 +16,14 @@ uv = "latest"
 [settings]
 # node のみ .node-version/.nvmrc を読む(.tool-versions は設定に関わらず常に読まれる)
 idiomatic_version_file_enable_tools = ["node"]
+# aqua/ubi など検証済みバイナリのバックエンドを優先し、プラグイン実行系は無効化
+disable_backends = ["asdf", "vfox"]
+
+[settings.npm]
+package_manager = "bun"
+
+[settings.pipx]
+uvx = true
 
 [settings.aqua]
 baked_registry = true
