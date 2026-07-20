@@ -3,6 +3,7 @@
 brew "git"
 brew "curl"
 brew "bash"
+brew "gnupg"               # gpg 本体(コミット署名)
 brew "pinentry-mac"        # GPG 署名のパスフレーズ入力
 brew "tree"
 brew "htop"
