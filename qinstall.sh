@@ -6,6 +6,12 @@
 #
 set -euo pipefail
 
+# root(sudo)実行を禁止(Homebrew が root を拒否するため)
+if [ "$(id -u)" -eq 0 ]; then
+  echo "root/sudo では実行しないでください。通常ユーザーで実行してください。" >&2
+  exit 1
+fi
+
 REPO_HTTPS="https://github.com/flum1025/dotfiles.git"
 DOTDIR="$HOME/dotfiles"
 
