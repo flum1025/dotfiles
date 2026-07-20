@@ -45,6 +45,7 @@ baked_registry = true
 "~/.cargo/config" = {}
 "~/.claude/settings.json" = {}
 "~/.config/git/config" = {}
+"~/.config/git/ignore" = {}                                  # global gitignore
 "~/.config/zsh" = {}                                          # ディレクトリ丸ごと
 "~/.config/tmux" = {}                                         # ディレクトリ丸ごと
 "~/.config/alacritty/alacritty.toml" = {}
