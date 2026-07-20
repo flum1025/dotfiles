@@ -1,0 +1,22 @@
+# グローバルに使う CLI ツール。
+# 言語ランタイムや各アプリ固有のツールは、各リポジトリの .mise.toml で管理する方針。
+[tools]
+age = "latest"
+"aqua:neovim/neovim" = "latest"
+aws-vault = "latest"
+awscli = { version = "latest", symlink_bins = "true" }
+bottom = "latest"
+jq = "latest"
+lazygit = "latest"
+ripgrep = "latest"
+tmux = "latest"
+"ubi:sorah/mairu" = "latest"
+usage = "latest"
+uv = "latest"
+
+[settings]
+idiomatic_version_file = true
+idiomatic_version_file_enable_tools = ["node"]
+
+[settings.aqua]
+baked_registry = true

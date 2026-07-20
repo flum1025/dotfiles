@@ -1,6 +1,6 @@
 #!/bin/bash
 # dotfiles管理の mise ツール宣言が変わったら再実行する(after: 設定適用後に走る)
-# tools hash: {{ include "dot_config/mise/conf.d/dotfiles.toml" | sha256sum }}
+# tools hash: {{ include "dot_config/mise/config.toml" | sha256sum }}
 set -euo pipefail
 
 # --- mise 本体のブートストラップ ---

@@ -1,6 +1,0 @@
-# dotfiles が brew から mise へ移管したツール。
-# tmux / neovim は既存の ~/.config/mise/config.toml で管理済みのため、
-# config.toml 整理時にこちらへ移す想定(現時点では重複宣言を避ける)。
-[tools]
-ripgrep = "latest"
-jq = "latest"
