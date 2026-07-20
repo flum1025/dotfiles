@@ -1,0 +1,7 @@
+.DS_Store
+**/.DS_Store
+
+{{/* lazygit の設定は macOS の ~/Library 配下のみ。Linux では XDG(~/.config/lazygit)へ別途対応 */}}
+{{ if ne .chezmoi.os "darwin" }}
+Library/Application Support/lazygit/config.yml
+{{ end }}

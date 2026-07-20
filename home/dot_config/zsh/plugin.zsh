@@ -10,9 +10,9 @@ zplug "zsh-users/zsh-autosuggestions"
 zplug "zsh-users/zsh-syntax-highlighting"
 zplug "b4b4r07/enhancd", use:init.sh
 
-ls ~/dotfiles/zsh/plugin/*.zsh >/dev/null 2>&1
+ls ~/.config/zsh/plugin/*.zsh >/dev/null 2>&1
 if [ ! $? -ne 0 ]; then
-  for file in ~/dotfiles/zsh/plugin/*.zsh; do
+  for file in ~/.config/zsh/plugin/*.zsh; do
     source $file
   done
 fi

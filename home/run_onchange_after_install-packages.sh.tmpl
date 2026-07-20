@@ -1,0 +1,23 @@
+#!/bin/bash
+# dotfiles管理の mise ツール宣言が変わったら再実行する(after: 設定適用後に走る)
+# tools hash: {{ include "dot_config/mise/conf.d/dotfiles.toml" | sha256sum }}
+set -euo pipefail
+
+# --- mise 本体のブートストラップ ---
+if ! command -v mise >/dev/null 2>&1; then
+  echo "Installing mise..."
+  curl -fsSL https://mise.run | sh
+  export PATH="$HOME/.local/bin:$PATH"
+fi
+
+# --- dotfiles管理ツールの導入(両OS共通) ---
+echo "Installing tools via mise..."
+mise install ripgrep jq
+
+{{ if eq .chezmoi.os "linux" -}}
+# --- zsh(Linux は apt。macOS は標準搭載のため何もしない) ---
+if ! command -v zsh >/dev/null 2>&1; then
+  echo "Installing zsh..."
+  sudo apt-get update && sudo apt-get install -y zsh
+fi
+{{- end }}
