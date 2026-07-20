@@ -14,7 +14,7 @@ tmux = "latest"
 uv = "latest"
 
 [settings]
-idiomatic_version_file = true
+# node のみ .node-version/.nvmrc を読む(.tool-versions は設定に関わらず常に読まれる)
 idiomatic_version_file_enable_tools = ["node"]
 
 [settings.aqua]
