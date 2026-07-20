@@ -6,12 +6,17 @@ age = "latest"
 aws-vault = "latest"
 awscli = { version = "latest", symlink_bins = "true" }
 bottom = "latest"
+gdu = "latest"
+gh = "latest"
+grpcurl = "latest"
 jq = "latest"
 lazygit = "latest"
 ripgrep = "latest"
+sshuttle = "latest"
 tmux = "latest"
 "ubi:sorah/mairu" = "latest"
 uv = "latest"
+yq = "latest"
 
 [settings]
 # node のみ .node-version/.nvmrc を読む(.tool-versions は設定に関わらず常に読まれる)
@@ -50,3 +55,24 @@ baked_registry = true
 [bootstrap.user]
 # ログインシェルを zsh に(macOS は標準搭載。Linux では要 apt 導入)
 login_shell = "/bin/zsh"
+
+# mise で入らない(registry になし)ツールと GUI/cask。brew(macOS)で導入。
+[bootstrap.packages]
+"brew:git" = "latest"
+"brew:curl" = "latest"
+"brew:bash" = "latest"
+"brew:pinentry-mac" = "latest"       # GPG 署名のパスフレーズ入力
+"brew:tree" = "latest"
+"brew:htop" = "latest"
+"brew:nmap" = "latest"
+"brew:bitwarden-cli" = "latest"
+"brew:translate-shell" = "latest"
+"brew:pwgen" = "latest"
+"brew:watch" = "latest"
+"brew-cask:font-hack-nerd-font" = "latest"
+"brew-cask:1password-cli" = "latest"
+"brew-cask:gcloud-cli" = "latest"
+"brew-cask:datadog-agent" = "latest"
+"brew-cask:copilot-cli" = "latest"
+"brew-cask:mitmproxy" = "latest"
+"brew-cask:android-platform-tools" = "latest"
