@@ -195,6 +195,8 @@
     "figma@claude-plugins-official": true
   },
   "alwaysThinkingEnabled": true,
+  "theme": "dark",
+  "preferredNotifChannel": "terminal_bell",
   "skipAutoPermissionPrompt": true,
-  "preferredNotifChannel": "terminal_bell"
+  "tui": "fullscreen"
 }
