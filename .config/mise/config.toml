@@ -50,6 +50,7 @@ baked_registry = true
 "~/.zshrc" = {}
 "~/.zprofile" = {}
 "~/.tmux.conf" = {}
+"~/.terraformrc" = {}                                        # terraform CLI: プロバイダキャッシュ設定
 "~/.cargo/config" = {}
 "~/.claude/settings.json" = {}
 "~/.config/git/config" = {}
