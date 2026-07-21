@@ -4,3 +4,5 @@
 .mcp.json
 .claude
 .playwright-mcp/
+fnox.local.toml
+mise.local.toml
