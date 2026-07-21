@@ -25,6 +25,7 @@ tmux = "latest"
 "ubi:sorah/mairu" = "latest"
 uv = "latest"
 yq = "latest"
+bitwarden = "2026.6.0"
 
 [settings]
 # node のみ .node-version/.nvmrc を読む(.tool-versions は設定に関わらず常に読まれる)
