@@ -58,6 +58,7 @@ baked_registry = true
 "~/.config/zsh" = {}                                          # ディレクトリ丸ごと
 "~/.config/tmux" = {}                                         # ディレクトリ丸ごと
 "~/.config/alacritty/alacritty.toml" = {}
+"~/.config/container/config.toml" = {}                       # Apple container CLI(DNS ドメイン等)
 "~/.config/workmux/config.yaml" = {}
 "~/.config/nvim" = {}                                        # dir 丸ごと symlink(ソース: .config/nvim)
 "~/.config/karabiner" = {}                                   # dir 丸ごと symlink(Karabiner が json を atomic 書換するため file symlink だと壊れる)
