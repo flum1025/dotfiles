@@ -8,6 +8,7 @@ brew "pinentry-mac"        # GPG 署名のパスフレーズ入力
 brew "tree"
 brew "htop"
 brew "nmap"
+brew "telnet"
 brew "bitwarden-cli"
 brew "translate-shell"
 brew "pwgen"
