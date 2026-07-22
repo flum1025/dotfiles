@@ -12,6 +12,7 @@ brew "bitwarden-cli"
 brew "translate-shell"
 brew "pwgen"
 brew "watch"
+brew "pv"
 brew "ffmpeg"              # 動画/音声処理(mise は conda backend のみのため brew で導入)
 
 cask "font-hack-nerd-font"
