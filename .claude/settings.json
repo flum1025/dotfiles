@@ -162,8 +162,10 @@
     "figma@claude-plugins-official": true
   },
   "alwaysThinkingEnabled": true,
+  "tui": "fullscreen",
   "theme": "dark",
   "preferredNotifChannel": "terminal_bell",
-  "skipAutoPermissionPrompt": true,
-  "tui": "fullscreen"
+  "autoCompactEnabled": true,
+  "remoteControlAtStartup": true,
+  "skipAutoPermissionPrompt": true
 }
