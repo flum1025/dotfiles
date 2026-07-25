@@ -22,7 +22,8 @@ ripgrep = "latest"
 "npm:@playwright/mcp" = "latest"  # Playwright MCP サーバ。bin: playwright-mcp(npx @playwright/mcp@latest 相当)
 sshuttle = "latest"
 tmux = "latest"
-"ubi:sorah/mairu" = "latest"
+"github:sorah/mairu" = "latest"
+"github:max-sixty/worktrunk" = { version = "latest", exe = "wt" }
 uv = "latest"
 yq = "latest"
 bitwarden = "2026.6.0"
@@ -30,8 +31,8 @@ bitwarden = "2026.6.0"
 [settings]
 # node のみ .node-version/.nvmrc を読む(.tool-versions は設定に関わらず常に読まれる)
 idiomatic_version_file_enable_tools = ["node"]
-# aqua/ubi など検証済みバイナリのバックエンドを優先し、プラグイン実行系は無効化
-disable_backends = ["asdf", "vfox"]
+# aqua/github など検証済みバイナリのバックエンドを優先し、プラグイン実行系は無効化
+disable_backends = ["asdf", "vfox", "ubi"]
 # dotfiles のソースルート(このリポジトリ)。既定モードは symlink
 dotfiles.root = "~/dotfiles"
 dotfiles.default_mode = "symlink"
