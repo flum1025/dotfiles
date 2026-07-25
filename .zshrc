@@ -11,3 +11,5 @@ command -v fzf >/dev/null && source <(fzf --zsh)
 
 # fnox(mise 管理)。機密を階層的に自動ロード。~/.config/fnox/config.toml を参照
 command -v fnox >/dev/null && eval "$(fnox activate zsh)"
+
+if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi
