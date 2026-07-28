@@ -63,6 +63,8 @@ baked_registry = true
 "~/.config/alacritty/alacritty.toml" = {}
 "~/.config/container/config.toml" = {}                       # Apple container CLI(DNS ドメイン等)
 "~/.config/workmux/config.yaml" = {}
+"~/.config/worktrunk/config.toml" = {}
+"~/.local/bin/taskenv" = {}
 "~/.config/nvim" = {}                                        # dir 丸ごと symlink(ソース: .config/nvim)
 "~/.config/karabiner" = {}                                   # dir 丸ごと symlink(Karabiner が json を atomic 書換するため file symlink だと壊れる)
 # lazygit は macOS のみ(~/Library)。Linux では別途 ~/.config/lazygit を用意する

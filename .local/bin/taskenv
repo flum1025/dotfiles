@@ -1,0 +1,129 @@
+#!/usr/bin/env bash
+# taskenv: タスク単位で、指定したリポジトリセットの git worktree を
+#   <project>/__tasks/<task>/<repo>
+# に一括作成し、そのタスクディレクトリを tmux の新規ウィンドウで開く。
+# 配置先は worktrunk の worktree-path テンプレートが決める。
+# リポジトリセットはプロジェクトディレクトリ直下の .tasksets.yaml で定義する。
+#
+#   usage: taskenv [--base <ref>] <set> <task>          # .tasksets.yaml の sets.<set> を使う
+#          taskenv [--base <ref>] --repos r1,r2 <task>  # セットを使わずリポを直接指定
+#          taskenv --rm <task>                          # タスクの worktree を全リポから撤去
+#   --base <ref>: 新ブランチの派生元。既定は各リポの origin default branch(= origin/main)
+set -euo pipefail
+
+usage() {
+  echo "usage: taskenv [--base <ref>] <set> <task>" >&2
+  echo "       taskenv [--base <ref>] --repos r1,r2 <task>" >&2
+  echo "       taskenv --rm <task>" >&2
+  echo "  --base <ref>: 派生元(既定: origin の default branch = origin/main)" >&2
+  exit 1
+}
+
+# --base <ref> を任意位置から抽出(残りは位置引数として後段で処理)。既定は空=origin default に解決
+base_override=""
+positional=()
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --base)
+      [ $# -ge 2 ] || { echo "taskenv: --base にはブランチ/ref を指定してください" >&2; usage; }
+      base_override="$2"; shift 2 ;;
+    *) positional+=("$1"); shift ;;
+  esac
+done
+set -- ${positional[@]+"${positional[@]}"}
+
+# cwd から上に辿って .tasksets.yaml を持つプロジェクトディレクトリを探す
+project=""
+dir="$PWD"
+while [ "$dir" != "/" ]; do
+  if [ -f "$dir/.tasksets.yaml" ]; then project="$dir"; break; fi
+  dir="$(dirname "$dir")"
+done
+[ -n "$project" ] || { echo "taskenv: .tasksets.yaml が見つかりません(プロジェクトディレクトリ内で実行してください)" >&2; exit 1; }
+
+# --rm: タスクの worktree を全リポから撤去して片付ける
+if [ "${1:-}" = "--rm" ]; then
+  [ $# -ge 2 ] || usage
+  task="$2"
+  taskdir="$project/__tasks/$task"
+  [ -d "$taskdir" ] || { echo "taskenv: タスクディレクトリがありません: $taskdir" >&2; exit 1; }
+  found=0
+  for d in "$taskdir"/*/; do
+    [ -d "$d" ] || continue
+    r="$(basename "$d")"
+    found=1
+    echo "==> removing $(basename "$project")/$r : $task"
+    wt -C "$project/$r" remove "$task" --yes 2>&1 | grep -v 'Cannot change directory' || true
+  done
+  [ "$found" -eq 1 ] || echo "taskenv: $taskdir 配下にリポがありません" >&2
+  rmdir "$taskdir" 2>/dev/null || true
+  echo "removed: $taskdir"
+  exit 0
+fi
+
+# 対象リポジトリの解決
+repos=()
+if [ "${1:-}" = "--repos" ]; then
+  [ $# -ge 3 ] || usage
+  IFS=',' read -ra repos <<< "$2"
+  task="$3"
+else
+  [ $# -ge 2 ] || usage
+  set_name="$1"; task="$2"
+  while IFS= read -r r; do
+    [ -n "$r" ] && repos+=("$r")
+  done < <(yq -r ".sets.\"$set_name\"[]?" "$project/.tasksets.yaml")
+fi
+[ "${#repos[@]}" -gt 0 ] || { echo "taskenv: リポジトリセットが空です($project/.tasksets.yaml を確認)" >&2; exit 1; }
+
+# origin の default branch(なければ origin/main → origin/master)を返す
+resolve_base() {
+  local repo="$1" base=""
+  base="$(git -C "$repo" symbolic-ref --quiet --short refs/remotes/origin/HEAD 2>/dev/null || true)"
+  if [ -z "$base" ]; then
+    local cand
+    for cand in origin/main origin/master; do
+      git -C "$repo" rev-parse --verify --quiet "$cand" >/dev/null 2>&1 && { base="$cand"; break; }
+    done
+  fi
+  printf '%s' "$base"
+}
+
+# 各リポで worktree を作成(worktrunk が <project>/__tasks/<task>/<repo> に配置)
+# 派生元: --base 指定があればそれ、無ければ fetch 後に origin の default branch(= origin/main)
+for r in "${repos[@]}"; do
+  repo="$project/$r"
+  echo "==> $(basename "$project")/$r : $task"
+
+  base_args=()
+  if git -C "$repo" remote get-url origin >/dev/null 2>&1; then
+    git -C "$repo" fetch --quiet origin || echo "  (fetch 失敗: オフライン? そのまま続行)" >&2
+  fi
+  if [ -n "$base_override" ]; then
+    base="$base_override"
+  else
+    base="$(resolve_base "$repo")"
+  fi
+  [ -n "$base" ] && base_args=(--base "$base")
+
+  if ! out=$(wt -C "$repo" switch --create "$task" ${base_args[@]+"${base_args[@]}"} --yes 2>&1); then
+    echo "$out" >&2
+    echo "taskenv: $r の worktree 作成に失敗しました" >&2
+    exit 1
+  fi
+  # シェル統合非活性時の cosmetic な警告だけ落として表示
+  echo "$out" | grep -v 'Cannot change directory' || true
+done
+
+taskdir="$project/__tasks/$task"
+echo "ready: $taskdir"
+
+# タスクディレクトリを tmux 新規ウィンドウで開き、左右2ペインに分割。左ペインで claude を起動
+if [ -n "${TMUX:-}" ]; then
+  left=$(tmux new-window -P -F '#{pane_id}' -c "$taskdir" -n "$task")
+  tmux split-window -h -t "$left" -c "$taskdir"   # 縦仕切り(左|右)。右ペインはシェル
+  tmux send-keys -t "$left" 'claude' Enter          # 左ペインで claude 起動
+  tmux select-pane -t "$left"
+else
+  echo "taskenv: tmux セッション外のため new-window はスキップしました($taskdir を手動で開いてください)" >&2
+fi

@@ -1,0 +1,1 @@
+worktree-path = "{{ repo_path | dirname }}/__tasks/{{ branch | sanitize }}/{{ repo }}"
