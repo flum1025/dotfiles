@@ -5,28 +5,44 @@
 # 配置先は worktrunk の worktree-path テンプレートが決める。
 # リポジトリセットはプロジェクトディレクトリ直下の .tasksets.yaml で定義する。
 #
-#   usage: taskenv [--base <ref>] <set> <task>          # .tasksets.yaml の sets.<set> を使う
-#          taskenv [--base <ref>] --repos r1,r2 <task>  # セットを使わずリポを直接指定
-#          taskenv --rm <task>                          # タスクの worktree を全リポから撤去
+# あわせて、タスクごとに「ポートスロット」を1つ払い出し、
+#   <project>/__tasks/<task>/mise.toml
+# に ANDL_PORT_<SERVICE> として書き出す(mise は親ディレクトリの設定も読むため、
+# 配下の全リポに効く)。各リポの mise.local.toml がこれを参照してポートを切り替えるので、
+# 複数タスクのサーバーを同時に起動できる。ポート定義は .tasksets.yaml の ports セクション。
+#
+#   usage: taskenv [--base <ref>] [--slot <n>] <set> <task>          # .tasksets.yaml の sets.<set> を使う
+#          taskenv [--base <ref>] [--slot <n>] --repos r1,r2 <task>  # セットを使わずリポを直接指定
+#          taskenv --rm <task>                                       # タスクの worktree を全リポから撤去
+#          taskenv --ports [<task>]                                  # 割り当て済みポートを表示
+#          taskenv [--slot <n>] --assign <task>                      # 既存タスクにポートだけ後付けする
 #   --base <ref>: 新ブランチの派生元。既定は各リポの origin default branch(= origin/main)
+#   --slot <n>:   ポートスロットを明示指定(既定: 空いている最小の番号)
 set -euo pipefail
 
 usage() {
-  echo "usage: taskenv [--base <ref>] <set> <task>" >&2
-  echo "       taskenv [--base <ref>] --repos r1,r2 <task>" >&2
+  echo "usage: taskenv [--base <ref>] [--slot <n>] <set> <task>" >&2
+  echo "       taskenv [--base <ref>] [--slot <n>] --repos r1,r2 <task>" >&2
   echo "       taskenv --rm <task>" >&2
+  echo "       taskenv --ports [<task>]" >&2
+  echo "       taskenv [--slot <n>] --assign <task>" >&2
   echo "  --base <ref>: 派生元(既定: origin の default branch = origin/main)" >&2
+  echo "  --slot <n>:   ポートスロット(既定: 空いている最小の番号)" >&2
   exit 1
 }
 
-# --base <ref> を任意位置から抽出(残りは位置引数として後段で処理)。既定は空=origin default に解決
+# --base <ref> / --slot <n> を任意位置から抽出(残りは位置引数として後段で処理)
 base_override=""
+slot_override=""
 positional=()
 while [ $# -gt 0 ]; do
   case "$1" in
     --base)
       [ $# -ge 2 ] || { echo "taskenv: --base にはブランチ/ref を指定してください" >&2; usage; }
       base_override="$2"; shift 2 ;;
+    --slot)
+      [ $# -ge 2 ] || { echo "taskenv: --slot には番号を指定してください" >&2; usage; }
+      slot_override="$2"; shift 2 ;;
     *) positional+=("$1"); shift ;;
   esac
 done
@@ -40,8 +56,119 @@ while [ "$dir" != "/" ]; do
   dir="$(dirname "$dir")"
 done
 [ -n "$project" ] || { echo "taskenv: .tasksets.yaml が見つかりません(プロジェクトディレクトリ内で実行してください)" >&2; exit 1; }
+tasksets="$project/.tasksets.yaml"
 
-# --rm: タスクの worktree を全リポから撤去して片付ける
+# ---- ポートスロット ----------------------------------------------------------
+
+port_stride="$(yq -r '.ports.stride // 100' "$tasksets")"
+port_slots="$(yq -r '.ports.slots // 8' "$tasksets")"
+
+# ports.services が空なら、ポート機能なし(mise.toml も作らない)で従来どおり動く
+has_ports() { [ "$(yq -r '.ports.services // {} | length' "$tasksets")" -gt 0 ]; }
+
+# サービス名 → 環境変数名の末尾(work-admin → WORK_ADMIN)
+port_var_suffix() { printf '%s' "$1" | tr '[:lower:]-' '[:upper:]_'; }
+
+# タスクの mise.toml から割り当て済みスロット番号を読む
+slot_in_file() {
+  [ -f "$1" ] || return 0
+  grep -m1 -E '^ANDL_TASK_SLOT *= *"[0-9]+"' "$1" 2>/dev/null | tr -dc '0-9' || true
+}
+
+# 空いている最小のスロット番号を払い出す(既に割り当て済みならそれを再利用)
+allocate_slot() {
+  local task="$1" f s n hit
+  s="$(slot_in_file "$project/__tasks/$task/mise.toml")"
+  [ -n "$s" ] && { printf '%s' "$s"; return 0; }
+
+  local -a taken=()
+  for f in "$project"/__tasks/*/mise.toml; do
+    [ -f "$f" ] || continue
+    s="$(slot_in_file "$f")"
+    [ -n "$s" ] && taken+=("$s")
+  done
+  for ((n = 1; n <= port_slots; n++)); do
+    hit=0
+    for s in ${taken[@]+"${taken[@]}"}; do [ "$s" = "$n" ] && { hit=1; break; }; done
+    [ "$hit" -eq 0 ] && { printf '%s' "$n"; return 0; }
+  done
+  echo "taskenv: 空きポートスロットがありません(ports.slots=$port_slots)。不要なタスクを taskenv --rm で撤去するか、.tasksets.yaml の slots を増やしてください" >&2
+  return 1
+}
+
+# <project>/__tasks/<task>/mise.toml を生成する。
+# mise は親ディレクトリの設定も読むので、この1ファイルで配下の全リポにポートが行き渡る。
+write_task_env() {
+  # local は「名前の宣言が先、代入が後」なので、同じ local 文の中で直前の変数を
+  # 参照すると set -u で落ちる。taskdir は分けて代入する
+  local task="$1" slot="$2" f name base k v
+  local taskdir="$project/__tasks/$task"
+  mkdir -p "$taskdir"
+  f="$taskdir/mise.toml"
+  {
+    echo "# taskenv が生成。手で編集しないこと(taskenv --rm \"$task\" で消える)。"
+    echo "# 各リポの mise.local.toml がここの ANDL_PORT_* を読んでポートを切り替える。"
+    echo "# ポート定義は $(basename "$project")/.tasksets.yaml の ports セクション。"
+    echo
+    echo "[env]"
+    printf 'ANDL_TASK = "%s"\n' "$task"
+    printf 'ANDL_TASK_SLOT = "%s"\n' "$slot"
+    while read -r name base; do
+      [ -n "$name" ] || continue
+      printf 'ANDL_PORT_%s = "%s"\n' "$(port_var_suffix "$name")" "$((base + slot * port_stride))"
+    done < <(yq -r '.ports.services // {} | to_entries | .[] | .key + " " + (.value|tostring)' "$tasksets")
+    # スロット固有の値(空文字は「スロット用の上書きなし」として書き出さない)
+    while IFS='=' read -r k v; do
+      [ -n "$k" ] && [ -n "$v" ] || continue
+      printf '%s = "%s"\n' "$k" "$v"
+    done < <(yq -r ".\"slot-extras\".\"$slot\" // {} | to_entries | .[] | .key + \"=\" + (.value|tostring)" "$tasksets")
+  } > "$f"
+  mise trust "$f" >/dev/null 2>&1 || true
+}
+
+# タスクのポート割り当てを表示する
+show_task_ports() {
+  local task="$1" f="$project/__tasks/$1/mise.toml" slot
+  [ -f "$f" ] || { echo "$task: ポート未割り当て(mise.toml がありません)"; return 0; }
+  slot="$(slot_in_file "$f")"
+  echo "$task (slot ${slot:-?})"
+  grep -E '^(ANDL_PORT_|ANDL_LINE_)' "$f" | sed 's/^/  /'
+}
+
+# ---- --ports: 割り当て状況の表示 --------------------------------------------
+
+if [ "${1:-}" = "--ports" ]; then
+  if [ $# -ge 2 ]; then
+    show_task_ports "$2"
+  else
+    found=0
+    for f in "$project"/__tasks/*/mise.toml; do
+      [ -f "$f" ] || continue
+      found=1
+      show_task_ports "$(basename "$(dirname "$f")")"
+    done
+    [ "$found" -eq 1 ] || echo "ポート割り当て済みのタスクはありません"
+  fi
+  exit 0
+fi
+
+# ---- --assign: 既存タスクにポートだけ後付けする(worktree は触らない) ---------
+# taskenv 導入前に作ったタスクや、mise.toml を消してしまったタスクの復旧用。
+# 付与後は各リポで mise がポートを読み直すので、起動中のサーバーは再起動が必要。
+
+if [ "${1:-}" = "--assign" ]; then
+  [ $# -ge 2 ] || usage
+  task="$2"
+  [ -d "$project/__tasks/$task" ] || { echo "taskenv: タスクディレクトリがありません: $project/__tasks/$task" >&2; exit 1; }
+  has_ports || { echo "taskenv: .tasksets.yaml に ports.services がありません" >&2; exit 1; }
+  if [ -n "$slot_override" ]; then slot="$slot_override"; else slot="$(allocate_slot "$task")"; fi
+  write_task_env "$task" "$slot"
+  show_task_ports "$task"
+  exit 0
+fi
+
+# ---- --rm: タスクの worktree を全リポから撤去して片付ける --------------------
+
 if [ "${1:-}" = "--rm" ]; then
   [ $# -ge 2 ] || usage
   task="$2"
@@ -56,12 +183,15 @@ if [ "${1:-}" = "--rm" ]; then
     wt -C "$project/$r" remove "$task" --yes 2>&1 | grep -v 'Cannot change directory' || true
   done
   [ "$found" -eq 1 ] || echo "taskenv: $taskdir 配下にリポがありません" >&2
+  # ポートスロットの解放(この mise.toml が台帳なので消すこと自体が解放になる)
+  rm -f "$taskdir/mise.toml"
   rmdir "$taskdir" 2>/dev/null || true
   echo "removed: $taskdir"
   exit 0
 fi
 
-# 対象リポジトリの解決
+# ---- 対象リポジトリの解決 ----------------------------------------------------
+
 repos=()
 if [ "${1:-}" = "--repos" ]; then
   [ $# -ge 3 ] || usage
@@ -72,9 +202,23 @@ else
   set_name="$1"; task="$2"
   while IFS= read -r r; do
     [ -n "$r" ] && repos+=("$r")
-  done < <(yq -r ".sets.\"$set_name\"[]?" "$project/.tasksets.yaml")
+  done < <(yq -r ".sets.\"$set_name\"[]?" "$tasksets")
 fi
-[ "${#repos[@]}" -gt 0 ] || { echo "taskenv: リポジトリセットが空です($project/.tasksets.yaml を確認)" >&2; exit 1; }
+[ "${#repos[@]}" -gt 0 ] || { echo "taskenv: リポジトリセットが空です($tasksets を確認)" >&2; exit 1; }
+
+# ---- ポートスロットの払い出し(worktree 作成より先) --------------------------
+# pre-start フックのコード生成(graphql-codegen 等)が既にポート依存の環境変数を参照するため、
+# wt switch の前にタスクルートの mise.toml を置いておく必要がある。
+if has_ports; then
+  if [ -n "$slot_override" ]; then
+    slot="$slot_override"
+  else
+    slot="$(allocate_slot "$task")"
+  fi
+  write_task_env "$task" "$slot"
+  echo "==> port slot $slot"
+  show_task_ports "$task" | tail -n +2
+fi
 
 # origin の default branch(なければ origin/main → origin/master)を返す
 resolve_base() {
@@ -117,6 +261,7 @@ done
 
 taskdir="$project/__tasks/$task"
 echo "ready: $taskdir"
+has_ports && show_task_ports "$task"
 
 # タスクディレクトリを tmux 新規ウィンドウで開き、左右2ペインに分割。左ペインで claude を起動
 if [ -n "${TMUX:-}" ]; then
