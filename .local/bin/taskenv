@@ -11,29 +11,34 @@
 # 配下の全リポに効く)。各リポの mise.local.toml がこれを参照してポートを切り替えるので、
 # 複数タスクのサーバーを同時に起動できる。ポート定義は .tasksets.yaml の ports セクション。
 #
-#   usage: taskenv [--base <ref>] [--slot <n>] <set> <task>          # .tasksets.yaml の sets.<set> を使う
-#          taskenv [--base <ref>] [--slot <n>] --repos r1,r2 <task>  # セットを使わずリポを直接指定
+#   usage: taskenv [--base <ref>] [--slot <n>] [--prompt [text]] <set> <task>          # .tasksets.yaml の sets.<set> を使う
+#          taskenv [--base <ref>] [--slot <n>] [--prompt [text]] --repos r1,r2 <task>  # セットを使わずリポを直接指定
 #          taskenv --rm <task>                                       # タスクの worktree を全リポから撤去
 #          taskenv --ports [<task>]                                  # 割り当て済みポートを表示
 #          taskenv [--slot <n>] --assign <task>                      # 既存タスクにポートだけ後付けする
-#   --base <ref>: 新ブランチの派生元。既定は各リポの origin default branch(= origin/main)
-#   --slot <n>:   ポートスロットを明示指定(既定: 空いている最小の番号)
+#   --base <ref>:    新ブランチの派生元。既定は各リポの origin default branch(= origin/main)
+#   --slot <n>:      ポートスロットを明示指定(既定: 空いている最小の番号)
+#   --prompt [text]: 起動する claude に渡す初期プロンプト。text 指定で直接(例 --prompt "hello")、
+#                    text 省略(--prompt を末尾に置く)で $EDITOR による対話入力(複数行可)
 set -euo pipefail
 
 usage() {
-  echo "usage: taskenv [--base <ref>] [--slot <n>] <set> <task>" >&2
-  echo "       taskenv [--base <ref>] [--slot <n>] --repos r1,r2 <task>" >&2
+  echo "usage: taskenv [--base <ref>] [--slot <n>] [--prompt [text]] <set> <task>" >&2
+  echo "       taskenv [--base <ref>] [--slot <n>] [--prompt [text]] --repos r1,r2 <task>" >&2
   echo "       taskenv --rm <task>" >&2
   echo "       taskenv --ports [<task>]" >&2
   echo "       taskenv [--slot <n>] --assign <task>" >&2
-  echo "  --base <ref>: 派生元(既定: origin の default branch = origin/main)" >&2
-  echo "  --slot <n>:   ポートスロット(既定: 空いている最小の番号)" >&2
+  echo "  --base <ref>:    派生元(既定: origin の default branch = origin/main)" >&2
+  echo "  --slot <n>:      ポートスロット(既定: 空いている最小の番号)" >&2
+  echo "  --prompt [text]: claude 初期プロンプト。text 省略(--prompt を末尾)で \$EDITOR 対話入力(複数行可)" >&2
   exit 1
 }
 
 # --base <ref> / --slot <n> を任意位置から抽出(残りは位置引数として後段で処理)
 base_override=""
 slot_override=""
+prompt_val=""
+prompt_mode=""   # "" | value | interactive
 positional=()
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -43,6 +48,13 @@ while [ $# -gt 0 ]; do
     --slot)
       [ $# -ge 2 ] || { echo "taskenv: --slot には番号を指定してください" >&2; usage; }
       slot_override="$2"; shift 2 ;;
+    --prompt)
+      # 次トークンがあり且つ --* でなければ直接値。無ければ(末尾 or 次が --*)対話入力
+      if [ $# -ge 2 ] && [ "${2#--}" = "$2" ]; then
+        prompt_val="$2"; prompt_mode="value"; shift 2
+      else
+        prompt_mode="interactive"; shift
+      fi ;;
     *) positional+=("$1"); shift ;;
   esac
 done
@@ -177,16 +189,29 @@ if [ "${1:-}" = "--rm" ]; then
   found=0
   for d in "$taskdir"/*/; do
     [ -d "$d" ] || continue
+    [ -e "$d/.git" ] || continue          # git worktree でないもの(.claude/.serena 等)はスキップ
     r="$(basename "$d")"
     found=1
     echo "==> removing $(basename "$project")/$r : $task"
     wt -C "$project/$r" remove "$task" --yes 2>&1 | grep -v 'Cannot change directory' || true
   done
-  [ "$found" -eq 1 ] || echo "taskenv: $taskdir 配下にリポがありません" >&2
-  # ポートスロットの解放(この mise.toml が台帳なので消すこと自体が解放になる)
-  rm -f "$taskdir/mise.toml"
-  rmdir "$taskdir" 2>/dev/null || true
-  echo "removed: $taskdir"
+  [ "$found" -eq 1 ] || echo "taskenv: $taskdir 配下に worktree がありません" >&2
+
+  # worktree が全て撤去できていれば、生成物ごと task dir を撤去する。
+  # 親dirで claude/serena を起動すると .claude/.serena 等が残り rmdir では消えないため、rm -rf で掃除する。
+  # (未撤去の worktree が残っている場合は、作業ロスト防止のため rm せず警告する)
+  leftover=""
+  for d in "$taskdir"/*/; do
+    [ -d "$d" ] || continue
+    [ -e "$d/.git" ] && leftover="$leftover $(basename "$d")"
+  done
+  if [ -n "$leftover" ]; then
+    echo "taskenv: worktree が未撤去のため $taskdir を残しました:$leftover" >&2
+    echo "taskenv: 各リポの変更を確認のうえ手動で撤去してください" >&2
+  else
+    rm -rf "$taskdir"   # ポートスロット(mise.toml 台帳)も含め生成物ごと撤去=スロット解放
+    echo "removed: $taskdir"
+  fi
   exit 0
 fi
 
@@ -205,6 +230,19 @@ else
   done < <(yq -r ".sets.\"$set_name\"[]?" "$tasksets")
 fi
 [ "${#repos[@]}" -gt 0 ] || { echo "taskenv: リポジトリセットが空です($tasksets を確認)" >&2; exit 1; }
+
+# ---- --prompt 対話入力($EDITOR で複数行。worktree 作成前に受け取る) ----------
+if [ "$prompt_mode" = "interactive" ]; then
+  pf_edit="$(mktemp)"
+  if [ -e /dev/tty ]; then
+    "${EDITOR:-vi}" "$pf_edit" </dev/tty >/dev/tty 2>&1 || true
+  else
+    echo "taskenv: プロンプトを入力し、Ctrl-D で確定してください:" >&2
+    cat > "$pf_edit" || true
+  fi
+  prompt_val="$(cat "$pf_edit")"
+  rm -f "$pf_edit"
+fi
 
 # ---- ポートスロットの払い出し(worktree 作成より先) --------------------------
 # pre-start フックのコード生成(graphql-codegen 等)が既にポート依存の環境変数を参照するため、
@@ -267,7 +305,14 @@ has_ports && show_task_ports "$task"
 if [ -n "${TMUX:-}" ]; then
   left=$(tmux new-window -P -F '#{pane_id}' -c "$taskdir" -n "$task")
   tmux split-window -h -t "$left" -c "$taskdir"   # 縦仕切り(左|右)。右ペインはシェル
-  tmux send-keys -t "$left" 'claude' Enter          # 左ペインで claude 起動
+  if [ -n "$prompt_val" ]; then
+    # プロンプトはファイル経由で claude に渡す(改行・引用符を安全に。$(cat) が読み終えたら rm)
+    pf="$taskdir/.taskenv-prompt"
+    printf '%s' "$prompt_val" > "$pf"
+    tmux send-keys -t "$left" "claude \"\$(cat '$pf'; rm -f '$pf')\"" Enter
+  else
+    tmux send-keys -t "$left" 'claude' Enter          # 左ペインで claude 起動
+  fi
   tmux select-pane -t "$left"
 else
   echo "taskenv: tmux セッション外のため new-window はスキップしました($taskdir を手動で開いてください)" >&2
