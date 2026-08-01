@@ -87,6 +87,30 @@ slot_in_file() {
   grep -m1 -E '^ANDL_TASK_SLOT *= *"[0-9]+"' "$1" 2>/dev/null | tr -dc '0-9' || true
 }
 
+# --slot で明示指定された番号を検証する。
+# 自動払い出し(allocate_slot)は範囲内の空きしか返さないが、--slot はそこを通らないので
+# 範囲外・他タスクとの重複をここで弾く(重複を許すと2タスクが同じポートで衝突する)。
+validate_slot() {
+  local s="$1" task="$2" f other
+  case "$s" in
+    '' | *[!0-9]*)
+      echo "taskenv: --slot には整数を指定してください: $s" >&2; return 1 ;;
+  esac
+  if [ "$s" -lt 1 ] || [ "$s" -gt "$port_slots" ]; then
+    echo "taskenv: --slot は 1〜$port_slots で指定してください($(basename "$tasksets") の ports.slots): $s" >&2
+    return 1
+  fi
+  for f in "$project"/__tasks/*/mise.toml; do
+    [ -f "$f" ] || continue
+    other="$(basename "$(dirname "$f")")"
+    [ "$other" = "$task" ] && continue # 自タスクの割り当て直しは許す
+    if [ "$(slot_in_file "$f")" = "$s" ]; then
+      echo "taskenv: slot $s は既に $other が使っています(taskenv --ports で確認)" >&2
+      return 1
+    fi
+  done
+}
+
 # 空いている最小のスロット番号を払い出す(既に割り当て済みならそれを再利用)
 allocate_slot() {
   local task="$1" f s n hit
@@ -173,7 +197,12 @@ if [ "${1:-}" = "--assign" ]; then
   task="$2"
   [ -d "$project/__tasks/$task" ] || { echo "taskenv: タスクディレクトリがありません: $project/__tasks/$task" >&2; exit 1; }
   has_ports || { echo "taskenv: .tasksets.yaml に ports.services がありません" >&2; exit 1; }
-  if [ -n "$slot_override" ]; then slot="$slot_override"; else slot="$(allocate_slot "$task")"; fi
+  if [ -n "$slot_override" ]; then
+    validate_slot "$slot_override" "$task" || exit 1
+    slot="$slot_override"
+  else
+    slot="$(allocate_slot "$task")"
+  fi
   write_task_env "$task" "$slot"
   show_task_ports "$task"
   exit 0
@@ -249,6 +278,7 @@ fi
 # wt switch の前にタスクルートの mise.toml を置いておく必要がある。
 if has_ports; then
   if [ -n "$slot_override" ]; then
+    validate_slot "$slot_override" "$task" || exit 1
     slot="$slot_override"
   else
     slot="$(allocate_slot "$task")"
