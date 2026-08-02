@@ -22,6 +22,7 @@ ripgrep = "latest"
 "npm:@playwright/mcp" = "latest"  # Playwright MCP サーバ。bin: playwright-mcp(npx @playwright/mcp@latest 相当)
 sshuttle = "latest"
 tmux = "latest"
+"pipx:tmuxp" = "latest"
 "github:sorah/mairu" = "latest"
 "github:max-sixty/worktrunk" = { version = "latest", exe = "wt" }
 uv = "latest"
