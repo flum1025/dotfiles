@@ -7,15 +7,18 @@
 #
 # あわせて、タスクごとに「ポートスロット」を1つ払い出し、
 #   <project>/__tasks/<task>/mise.toml
-# に ANDL_PORT_<SERVICE> として書き出す(mise は親ディレクトリの設定も読むため、
+# に <PREFIX>_PORT_<SERVICE> として書き出す(mise は親ディレクトリの設定も読むため、
 # 配下の全リポに効く)。各リポの mise.local.toml がこれを参照してポートを切り替えるので、
-# 複数タスクのサーバーを同時に起動できる。ポート定義は .tasksets.yaml の ports セクション。
+# 複数タスクのサーバーを同時に起動できる。ポート定義と接頭辞は .tasksets.yaml の
+# ports セクション(prefix / stride / slots / services / repos)。
 #
 #   usage: taskenv [--base <ref>] [--slot <n>] [--prompt [text]] <set> <task>          # .tasksets.yaml の sets.<set> を使う
 #          taskenv [--base <ref>] [--slot <n>] [--prompt [text]] --repos r1,r2 <task>  # セットを使わずリポを直接指定
 #          taskenv --rm <task>                                       # タスクの worktree を全リポから撤去
 #          taskenv --ports [<task>]                                  # 割り当て済みポートを表示
 #          taskenv [--slot <n>] --assign <task>                      # 既存タスクにポートだけ後付けする
+#          taskenv --window <task>                                   # 既存タスクの tmux ウィンドウを開き直す
+#          taskenv --prune                                           # 全リポで git worktree prune
 #   --base <ref>:    新ブランチの派生元。既定は各リポの origin default branch(= origin/main)
 #   --slot <n>:      ポートスロットを明示指定(既定: 空いている最小の番号)
 #   --prompt [text]: 起動する claude に渡す初期プロンプト。text 指定で直接(例 --prompt "hello")、
@@ -28,6 +31,8 @@ usage() {
   echo "       taskenv --rm <task>" >&2
   echo "       taskenv --ports [<task>]" >&2
   echo "       taskenv [--slot <n>] --assign <task>" >&2
+  echo "       taskenv --window <task>" >&2
+  echo "       taskenv --prune" >&2
   echo "  --base <ref>:    派生元(既定: origin の default branch = origin/main)" >&2
   echo "  --slot <n>:      ポートスロット(既定: 空いている最小の番号)" >&2
   echo "  --prompt [text]: claude 初期プロンプト。text 省略(--prompt を末尾)で \$EDITOR 対話入力(複数行可)" >&2
@@ -74,17 +79,20 @@ tasksets="$project/.tasksets.yaml"
 
 port_stride="$(yq -r '.ports.stride // 100' "$tasksets")"
 port_slots="$(yq -r '.ports.slots // 8' "$tasksets")"
+# 書き出す環境変数の接頭辞。プロジェクト側で自由に決める(<PREFIX>_TASK / _TASK_SLOT /
+# _PORT_<SERVICE>)。各リポの mise.local.toml が参照する名前もこれに揃える
+port_prefix="$(yq -r '.ports.prefix // "TASKENV"' "$tasksets")"
 
 # ports.services が空なら、ポート機能なし(mise.toml も作らない)で従来どおり動く
 has_ports() { [ "$(yq -r '.ports.services // {} | length' "$tasksets")" -gt 0 ]; }
 
-# サービス名 → 環境変数名の末尾(work-admin → WORK_ADMIN)
+# サービス名 → 環境変数名の末尾(小文字とハイフンを大文字とアンダースコアに: foo-bar → FOO_BAR)
 port_var_suffix() { printf '%s' "$1" | tr '[:lower:]-' '[:upper:]_'; }
 
 # タスクの mise.toml から割り当て済みスロット番号を読む
 slot_in_file() {
   [ -f "$1" ] || return 0
-  grep -m1 -E '^ANDL_TASK_SLOT *= *"[0-9]+"' "$1" 2>/dev/null | tr -dc '0-9' || true
+  grep -m1 -E "^${port_prefix}_TASK_SLOT *= *\"[0-9]+\"" "$1" 2>/dev/null | tr -dc '0-9' || true
 }
 
 # --slot で明示指定された番号を検証する。
@@ -132,26 +140,66 @@ allocate_slot() {
   return 1
 }
 
+# そのサービスのポートをこのタスクに書き出すべきかを判定する。
+#   usage: service_in_task <service> [<repo>...]
+# ports.repos にサービスの実体リポジトリが書かれていて、それがタスクのリポジトリセットに
+# 含まれない場合は書き出さない。
+# 「変数が定義されていればそのサービスへ接続する」という設定を別サービス側が書いている場合、
+# そのサービスがタスクに居ないのに変数を書くと、誰も listen していないポートを指してしまう。
+# 書かなければ参照側の default(既定の接続先)が効く。
+service_in_task() {
+  local svc="$1"
+  shift
+  local repo r
+  repo="$(yq -r ".ports.repos.\"$svc\" // \"\"" "$tasksets")"
+  [ -n "$repo" ] || return 0 # 実体リポ未定義のサービスは常に書き出す
+  for r in "$@"; do [ "$r" = "$repo" ] && return 0; done
+  return 1
+}
+
 # <project>/__tasks/<task>/mise.toml を生成する。
 # mise は親ディレクトリの設定も読むので、この1ファイルで配下の全リポにポートが行き渡る。
+#   usage: write_task_env <task> <slot> [<repo>...]
+# リポジトリを渡すと、そのセットに含まれるサービスのポートだけを書き出す(渡さない場合は
+# 絞り込みなし = 全サービス)。
+# 渡されたリポジトリに加えて、既にタスク配下にある worktree も対象に含める。
+# そうしないと --repos で一部だけ作り直したときに、既にあるリポジトリのポートが
+# mise.toml から消えてしまう(失敗したリポだけ後から足すケースで壊れる)。
 write_task_env() {
   # local は「名前の宣言が先、代入が後」なので、同じ local 文の中で直前の変数を
   # 参照すると set -u で落ちる。taskdir は分けて代入する
-  local task="$1" slot="$2" f name base k v
+  local task="$1" slot="$2" f name base k v d e r
+  shift 2
+  local -a task_repos=("$@")
   local taskdir="$project/__tasks/$task"
+
+  for d in "$taskdir"/*/; do
+    [ -d "$d" ] || continue
+    e="$(basename "$d")"
+    for r in ${task_repos[@]+"${task_repos[@]}"}; do
+      [ "$r" = "$e" ] && { e=""; break; }
+    done
+    [ -n "$e" ] && task_repos+=("$e")
+  done
+
   mkdir -p "$taskdir"
   f="$taskdir/mise.toml"
   {
     echo "# taskenv が生成。手で編集しないこと(taskenv --rm \"$task\" で消える)。"
-    echo "# 各リポの mise.local.toml がここの ANDL_PORT_* を読んでポートを切り替える。"
+    echo "# 各リポの mise.local.toml がここの ${port_prefix}_PORT_* を読んでポートを切り替える。"
     echo "# ポート定義は $(basename "$project")/.tasksets.yaml の ports セクション。"
+    echo "# ポートを書き出すのはこのタスクのリポジトリセットに含まれるサービスだけ"
+    echo "# (居ないサービスの変数を書くと、参照側が誰も listen していないポートを指すため)。"
     echo
     echo "[env]"
-    printf 'ANDL_TASK = "%s"\n' "$task"
-    printf 'ANDL_TASK_SLOT = "%s"\n' "$slot"
+    printf '%s_TASK = "%s"\n' "$port_prefix" "$task"
+    printf '%s_TASK_SLOT = "%s"\n' "$port_prefix" "$slot"
     while read -r name base; do
       [ -n "$name" ] || continue
-      printf 'ANDL_PORT_%s = "%s"\n' "$(port_var_suffix "$name")" "$((base + slot * port_stride))"
+      if [ "${#task_repos[@]}" -gt 0 ]; then
+        service_in_task "$name" "${task_repos[@]}" || continue
+      fi
+      printf '%s_PORT_%s = "%s"\n' "$port_prefix" "$(port_var_suffix "$name")" "$((base + slot * port_stride))"
     done < <(yq -r '.ports.services // {} | to_entries | .[] | .key + " " + (.value|tostring)' "$tasksets")
     # スロット固有の値(空文字は「スロット用の上書きなし」として書き出さない)
     while IFS='=' read -r k v; do
@@ -162,13 +210,108 @@ write_task_env() {
   mise trust "$f" >/dev/null 2>&1 || true
 }
 
-# タスクのポート割り当てを表示する
+# タスクの割り当てを表示する(スロット番号は見出しに出すので env からは省く)
 show_task_ports() {
   local task="$1" f="$project/__tasks/$1/mise.toml" slot
   [ -f "$f" ] || { echo "$task: ポート未割り当て(mise.toml がありません)"; return 0; }
   slot="$(slot_in_file "$f")"
   echo "$task (slot ${slot:-?})"
-  grep -E '^(ANDL_PORT_|ANDL_LINE_)' "$f" | sed 's/^/  /'
+  grep -E '^[A-Za-z_][A-Za-z0-9_]* *=' "$f" |
+    grep -v -E "^${port_prefix}_TASK(_SLOT)? *=" | sed 's/^/  /'
+}
+
+# tmux ウィンドウを開き、左端はタスクディレクトリで claude、右側の領域に
+# リポジトリ分のシェルを格子状(タイル)に並べる:
+#   ┌────────┬─────┬─────┐
+#   │ claude │ r1  │ r4  │   列数は正方形に近くなるよう選び、
+#   │(taskdir)├─────┼─────┤   リポジトリは列ごとに上から詰める
+#   │        │ r2  │ r5  │
+#   │        ├─────┼─────┤
+#   │        │ r3  │     │
+#   └────────┴─────┴─────┘
+# select-layout tiled はウィンドウ全体を平してしまい claude の列を保てないので、
+# 分割を右側の領域の中だけで行って格子を作る(-p で均等になる比率を指定)。
+#   usage: open_task_window <task> [<repo>...]
+claude_pane_pct=30 # 左端 claude ペインの幅(%)
+
+open_task_window() {
+  local task="$1"
+  shift
+  local -a repos=("$@")
+  local taskdir="$project/__tasks/$task"
+  local left area rest p n cols rows rows_base rows_rem idx c j pf
+
+  if [ -z "${TMUX:-}" ]; then
+    echo "taskenv: tmux セッション外のため new-window はスキップしました($taskdir を手動で開いてください)" >&2
+    return 0
+  fi
+  # タスクディレクトリが無いまま new-window すると親ディレクトリで開いてしまう
+  if [ ! -d "$taskdir" ]; then
+    echo "taskenv: タスクディレクトリがないためウィンドウは開きません: $taskdir" >&2
+    return 1
+  fi
+
+  left=$(tmux new-window -P -F '#{pane_id}' -c "$taskdir" -n "$task")
+  tmux select-pane -t "$left" -T "claude" 2>/dev/null || true
+
+  n=${#repos[@]}
+  if [ "$n" -gt 0 ]; then
+    # 列数: n 以上になる最小の平方数の辺(1,2,3,...)。列ごとの行数はできるだけ均等に振る
+    cols=1
+    while [ $((cols * cols)) -lt "$n" ]; do cols=$((cols + 1)); done
+    rows_base=$((n / cols))
+    rows_rem=$((n % cols))
+
+    # 右側の領域を切り出す。この最初のペインが 1 列目 1 行目(= repos[0])になる
+    if ! area=$(tmux split-window -h -t "$left" -p $((100 - claude_pane_pct)) \
+      -c "$taskdir/${repos[0]}" -P -F '#{pane_id}' 2>/dev/null); then
+      echo "taskenv: ウィンドウが狭くペインを作れませんでした(手動で分割してください)" >&2
+      area=""
+    fi
+
+    idx=0
+    for ((c = 0; c < cols; c++)); do
+      [ -n "$area" ] || break
+      rows=$rows_base
+      [ "$c" -lt "$rows_rem" ] && rows=$((rows + 1))
+
+      # 最終列以外は、残りの列のための領域を先に切り出しておく
+      rest=""
+      if [ $((c + 1)) -lt "$cols" ]; then
+        if ! rest=$(tmux split-window -h -t "$area" -p $((100 * (cols - c - 1) / (cols - c))) \
+          -c "$taskdir/${repos[idx + rows]}" -P -F '#{pane_id}' 2>/dev/null); then
+          echo "taskenv: ウィンドウ幅が足りず ${repos[idx + rows]} 以降のペインは作れませんでした" >&2
+          rest=""
+          cols=$((c + 1)) # 以降の列は作らない
+        fi
+      fi
+
+      # この列を rows 個に縦分割(1 行目は area 自身)
+      tmux select-pane -t "$area" -T "${repos[idx]}" 2>/dev/null || true
+      p="$area"
+      for ((j = 1; j < rows; j++)); do
+        if ! p=$(tmux split-window -v -t "$p" -p $((100 * (rows - j) / (rows - j + 1))) \
+          -c "$taskdir/${repos[idx + j]}" -P -F '#{pane_id}' 2>/dev/null); then
+          echo "taskenv: ウィンドウ高が足りず ${repos[idx + j]} 以降のペインは作れませんでした" >&2
+          break
+        fi
+        tmux select-pane -t "$p" -T "${repos[idx + j]}" 2>/dev/null || true
+      done
+
+      idx=$((idx + rows))
+      area="$rest"
+    done
+  fi
+
+  if [ -n "$prompt_val" ]; then
+    # プロンプトはファイル経由で claude に渡す(改行・引用符を安全に。$(cat) が読み終えたら rm)
+    pf="$taskdir/.taskenv-prompt"
+    printf '%s' "$prompt_val" > "$pf"
+    tmux send-keys -t "$left" "claude \"\$(cat '$pf'; rm -f '$pf')\"" Enter
+  else
+    tmux send-keys -t "$left" 'claude' Enter # 左ペインで claude 起動
+  fi
+  tmux select-pane -t "$left"
 }
 
 # ---- --ports: 割り当て状況の表示 --------------------------------------------
@@ -203,8 +346,73 @@ if [ "${1:-}" = "--assign" ]; then
   else
     slot="$(allocate_slot "$task")"
   fi
-  write_task_env "$task" "$slot"
+  # リポジトリセットは worktree のディレクトリから推定する(--assign は既存タスク向けなので
+  # セット名を受け取っていない)。1つも無ければ絞り込みなしで全サービスを書き出す。
+  assign_repos=()
+  for d in "$project/__tasks/$task"/*/; do
+    [ -d "$d" ] && assign_repos+=("$(basename "$d")")
+  done
+  [ "${#assign_repos[@]}" -gt 0 ] ||
+    echo "taskenv: $task 配下にリポジトリがないため、全サービスのポートを書き出します" >&2
+  write_task_env "$task" "$slot" ${assign_repos[@]+"${assign_repos[@]}"}
   show_task_ports "$task"
+  exit 0
+fi
+
+# ---- --window: 既存タスクの tmux ウィンドウを開き直す ------------------------
+# セットアップが途中で失敗した場合(ウィンドウ作成まで到達しない)や、ウィンドウを
+# 閉じてしまった場合に使う。worktree は作らず、タスク配下にあるリポジトリから
+# ペインを組み直すだけ。
+
+if [ "${1:-}" = "--window" ]; then
+  [ $# -ge 2 ] || usage
+  task="$2"
+  taskdir="$project/__tasks/$task"
+  [ -d "$taskdir" ] || { echo "taskenv: タスクディレクトリがありません: $taskdir" >&2; exit 1; }
+  window_repos=()
+  for d in "$taskdir"/*/; do
+    [ -d "$d" ] && window_repos+=("$(basename "$d")")
+  done
+  [ "${#window_repos[@]}" -gt 0 ] ||
+    echo "taskenv: $task 配下にリポジトリがありません(claude のペインだけ開きます)" >&2
+  open_task_window "$task" ${window_repos[@]+"${window_repos[@]}"}
+  exit 0
+fi
+
+# ---- --prune: 全リポジトリで git worktree prune ------------------------------
+# worktree のディレクトリだけ手で消した場合、git 側には登録が残り続ける(wt list や
+# switch がゴーストを掴む)。プロジェクト直下の各リポジトリで prune して掃除する。
+# 消えるのは「ディレクトリが既に無い登録」だけなので、事前確認(dry-run)は用意していない。
+# 消した内容は --verbose の出力に出る。
+
+if [ "${1:-}" = "--prune" ]; then
+  found=0
+  pruned=0
+  for d in "$project"/*/; do
+    r="$(basename "$d")"
+    [ "$r" = "__tasks" ] && continue
+    git -C "$d" rev-parse --git-dir >/dev/null 2>&1 || continue
+    found=$((found + 1))
+    out="$(git -C "$d" worktree prune --verbose 2>&1 || true)"
+    if [ -n "$out" ]; then
+      pruned=$((pruned + 1))
+      echo "==> $r"
+      echo "$out" | sed 's/^/  /'
+    fi
+  done
+  [ "$found" -gt 0 ] || { echo "taskenv: $project 直下に git リポジトリがありません" >&2; exit 1; }
+  echo "checked $found repos, $pruned had stale worktrees"
+
+  # リポジトリが 1 つも残っていないタスクディレクトリは、mise.toml がスロットを
+  # 掴んだままになる(台帳がこのファイルなので)。気づけるように出しておく。
+  for f in "$project"/__tasks/*/mise.toml; do
+    [ -f "$f" ] || continue
+    t="$(basename "$(dirname "$f")")"
+    for e in "$project/__tasks/$t"/*/; do
+      [ -d "$e" ] && continue 2
+    done
+    echo "taskenv: $t にリポジトリがありません。taskenv --rm $t でスロットを解放できます" >&2
+  done
   exit 0
 fi
 
@@ -283,7 +491,7 @@ if has_ports; then
   else
     slot="$(allocate_slot "$task")"
   fi
-  write_task_env "$task" "$slot"
+  write_task_env "$task" "$slot" "${repos[@]}"
   echo "==> port slot $slot"
   show_task_ports "$task" | tail -n +2
 fi
@@ -303,9 +511,23 @@ resolve_base() {
 
 # 各リポで worktree を作成(worktrunk が <project>/__tasks/<task>/<repo> に配置)
 # 派生元: --base 指定があればそれ、無ければ fetch 後に origin の default branch(= origin/main)
+#
+# 1リポの失敗で全体を止めない。止めると tmux ウィンドウの作成まで到達せず、成功した
+# リポにも触れない状態で放り出されるため。失敗は覚えておいて最後にまとめて報告する。
+# 既に worktree があるリポはスキップ、ブランチだけあるリポは --create 無しで拾い直すので、
+# 失敗後に同じコマンドを再実行できる。
+taskdir="$project/__tasks/$task"
+failed=()
+ready_repos=()
 for r in "${repos[@]}"; do
   repo="$project/$r"
   echo "==> $(basename "$project")/$r : $task"
+
+  if [ -d "$taskdir/$r" ]; then
+    echo "  (既に worktree があります。スキップ)"
+    ready_repos+=("$r")
+    continue
+  fi
 
   base_args=()
   if git -C "$repo" remote get-url origin >/dev/null 2>&1; then
@@ -318,32 +540,39 @@ for r in "${repos[@]}"; do
   fi
   [ -n "$base" ] && base_args=(--base "$base")
 
-  if ! out=$(wt -C "$repo" switch --create "$task" ${base_args[@]+"${base_args[@]}"} --yes 2>&1); then
+  # ブランチが既にあると --create は必ず失敗するので、その場合は既存ブランチに worktree を付ける
+  create_args=(--create)
+  if git -C "$repo" rev-parse --verify --quiet "refs/heads/$task" >/dev/null 2>&1; then
+    create_args=()
+    base_args=()
+    behind="$(git -C "$repo" rev-list --count "$task..${base:-origin/main}" 2>/dev/null || echo 0)"
+    echo "  (ブランチ $task が既にあるので再利用します${behind:+ / ${base:-origin/main} より $behind コミット遅れ})"
+  fi
+
+  if ! out=$(wt -C "$repo" switch ${create_args[@]+"${create_args[@]}"} "$task" \
+    ${base_args[@]+"${base_args[@]}"} --yes 2>&1); then
     echo "$out" >&2
-    echo "taskenv: $r の worktree 作成に失敗しました" >&2
-    exit 1
+    echo "taskenv: $r の worktree 作成に失敗しました(続行します)" >&2
+    failed+=("$r")
+    continue
   fi
   # シェル統合非活性時の cosmetic な警告だけ落として表示
   echo "$out" | grep -v 'Cannot change directory' || true
+  ready_repos+=("$r")
 done
 
-taskdir="$project/__tasks/$task"
 echo "ready: $taskdir"
 has_ports && show_task_ports "$task"
 
-# タスクディレクトリを tmux 新規ウィンドウで開き、左右2ペインに分割。左ペインで claude を起動
-if [ -n "${TMUX:-}" ]; then
-  left=$(tmux new-window -P -F '#{pane_id}' -c "$taskdir" -n "$task")
-  tmux split-window -h -t "$left" -c "$taskdir"   # 縦仕切り(左|右)。右ペインはシェル
-  if [ -n "$prompt_val" ]; then
-    # プロンプトはファイル経由で claude に渡す(改行・引用符を安全に。$(cat) が読み終えたら rm)
-    pf="$taskdir/.taskenv-prompt"
-    printf '%s' "$prompt_val" > "$pf"
-    tmux send-keys -t "$left" "claude \"\$(cat '$pf'; rm -f '$pf')\"" Enter
-  else
-    tmux send-keys -t "$left" 'claude' Enter          # 左ペインで claude 起動
-  fi
-  tmux select-pane -t "$left"
-else
-  echo "taskenv: tmux セッション外のため new-window はスキップしました($taskdir を手動で開いてください)" >&2
+# 1つでも失敗したらウィンドウは開かない。
+# 中途半端なペイン構成のウィンドウが増えるだけで、リポが1つも作れなかった場合は
+# タスクディレクトリ自体が無く親ディレクトリでウィンドウが開いてしまうため。
+# 復旧後は同じコマンドを再実行するか、taskenv --window でウィンドウだけ開ける。
+if [ "${#failed[@]}" -gt 0 ]; then
+  echo "taskenv: 失敗したリポジトリ: ${failed[*]}" >&2
+  echo "taskenv: 原因を直したあと同じコマンドを再実行してください(成功済みのリポはスキップされます)" >&2
+  echo "taskenv: ウィンドウだけ開きたい場合は taskenv --window $task" >&2
+  exit 1
 fi
+
+open_task_window "$task" ${ready_repos[@]+"${ready_repos[@]}"}
