@@ -79,6 +79,21 @@ while IFS=$'\t' read -r s path; do
   n=$((n + 1))
 done < <(tmux list-sessions -F $'#{session_name}\t#{session_path}')
 
+# 閉じたセッションの定義が残っていると C-r で復活してしまうので掃除する。
+# ただし n = 0 のとき (サーバごと終了した直後など) は全消しになるため触らない。
+if [ "$n" -gt 0 ]; then
+  live=$'\n'"$(tmux list-sessions -F '#{session_name}')"$'\n'
+  for f in "$OUTDIR"/*.yaml; do
+    [ -e "$f" ] || continue
+    name="${f##*/}"
+    name="${name%.yaml}"
+    case "$live" in
+      *$'\n'"$name"$'\n'*) ;;
+      *) rm -f "$f" ;;
+    esac
+  done
+fi
+
 if [ "$failed" -gt 0 ]; then
   tmux display-message "tmuxp: froze $n, failed $failed -> $LOG"
 else
