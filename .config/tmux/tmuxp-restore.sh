@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# ワークスペースディレクトリ内の定義をまとめて tmuxp で復元する。
+# C-s (tmuxp-freeze.sh) が書き出した定義をまとめて tmuxp で復元する。
 # ファイル名 = セッション名の前提。既に存在するセッションは飛ばす。
 set -euo pipefail
 
 MISE="$HOME/.local/bin/mise"
-WORKDIR="${TMUXP_RESTORE_DIR:-$HOME/.config/tmuxp}"
+WORKDIR="${TMUXP_RESTORE_DIR:-$HOME/.local/state/tmuxp}"
 LOG="$HOME/.local/state/tmuxp/restore.log"
 
 cd "$HOME"

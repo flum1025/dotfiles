@@ -2,6 +2,9 @@
 export EDITORP=vim #エディタをvimに設定
 export LANG=ja_JP.UTF-8 #文字コードをUTF-8に設定
 
+# tmuxp のワークスペース置き場。tmux の prefix + C-s / C-r と同じ場所を CLI にも見せる
+export TMUXP_CONFIGDIR="$HOME/.local/state/tmuxp"
+
 # history
 HISTFILE=${HOME}/.zsh_history
 HISTSIZE=100000
