@@ -39,7 +39,7 @@ cyan = "#93A1A1"
 white = "#FDF6E3"
 
 [mouse]
-hide_when_typing = true
+hide_when_typing = false
 
 [bell]
 command = { program = "osascript", args = ["-e", "beep"] }
