@@ -212,12 +212,20 @@ write_task_env() {
 
 # タスクの割り当てを表示する(スロット番号は見出しに出すので env からは省く)
 show_task_ports() {
-  local task="$1" f="$project/__tasks/$1/mise.toml" slot
+  local task="$1" f="$project/__tasks/$1/mise.toml" slot vars
   [ -f "$f" ] || { echo "$task: ポート未割り当て(mise.toml がありません)"; return 0; }
   slot="$(slot_in_file "$f")"
   echo "$task (slot ${slot:-?})"
-  grep -E '^[A-Za-z_][A-Za-z0-9_]* *=' "$f" |
-    grep -v -E "^${port_prefix}_TASK(_SLOT)? *=" | sed 's/^/  /'
+  # このタスクのリポジトリに対応するサービスが1つも無いと0件になる。grep は0件で 1 を
+  # 返すので、そのまま関数の最後に置くと pipefail + set -e で呼び出し元ごと落ちる
+  # (worktree 作成前の 1 箇所で呼んでいるため、worktree が作られないまま終了していた)
+  vars="$(grep -E '^[A-Za-z_][A-Za-z0-9_]* *=' "$f" |
+    grep -v -E "^${port_prefix}_TASK(_SLOT)? *=" || true)"
+  if [ -n "$vars" ]; then
+    echo "$vars" | sed 's/^/  /'
+  else
+    echo "  (このタスクのリポジトリに対応するサービスが無いため、割り当てはありません)"
+  fi
 }
 
 # tmux ウィンドウを開き、左端はタスクディレクトリで claude、右側の領域に
