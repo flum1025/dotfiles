@@ -168,5 +168,6 @@
   "preferredNotifChannel": "terminal_bell",
   "autoCompactEnabled": true,
   "remoteControlAtStartup": true,
-  "skipAutoPermissionPrompt": true
+  "skipAutoPermissionPrompt": true,
+  "agentPushNotifEnabled": true
 }
