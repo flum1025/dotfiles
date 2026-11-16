@@ -2,6 +2,8 @@
 # taskenv: タスク単位で、指定したリポジトリセットの git worktree を
 #   <project>/__tasks/<task>/<repo>
 # に一括作成し、そのタスクディレクトリを tmux の新規ウィンドウで開く。
+# タスクのウィンドウが既にあれば(--repos でリポを後から足したとき等)、新しい
+# ウィンドウは作らず、そのウィンドウにペインを足して組み直す。
 # 配置先は worktrunk の worktree-path テンプレートが決める。
 # リポジトリセットはプロジェクトディレクトリ直下の .tasksets.yaml で定義する。
 #
@@ -17,7 +19,7 @@
 #          taskenv --rm <task>                                       # タスクの worktree を全リポから撤去
 #          taskenv --ports [<task>]                                  # 割り当て済みポートを表示
 #          taskenv [--slot <n>] --assign <task>                      # 既存タスクにポートだけ後付けする
-#          taskenv --window <task>                                   # 既存タスクの tmux ウィンドウを開き直す
+#          taskenv --window <task>                                   # 既存タスクの tmux ウィンドウを開く(あればペインを組み直す)
 #          taskenv --prune                                           # 全リポで git worktree prune
 #   --base <ref>:    新ブランチの派生元。既定は各リポの origin default branch(= origin/main)
 #   --slot <n>:      ポートスロットを明示指定(既定: 空いている最小の番号)
@@ -238,16 +240,78 @@ show_task_ports() {
 #   │        │ r3  │     │
 #   └────────┴─────┴─────┘
 # select-layout tiled はウィンドウ全体を平してしまい claude の列を保てないので、
-# 分割を右側の領域の中だけで行って格子を作る(-p で均等になる比率を指定)。
+# 分割を右側の領域の中だけで行って格子を作る(-l で均等になる比率を指定)。
+#
+# タスクのウィンドウが既にあれば(--repos で後からリポを足したとき、--window を
+# 再実行したとき)、新しいウィンドウは作らずそのウィンドウで格子を組み直す:
+#   - claude のペインはそのまま残す(claude も起動し直さない)
+#   - 既存のリポペインは一度 break-pane で退避し、join-pane で格子に戻す。
+#     ペインを移すだけなので、中のシェルや実行中のコマンド、スクロールバックは残る
+#   - 足りないリポのペインだけ split-window で新しく作る
+#   - リポに対応しないペイン(手で分割したもの等)は右端の列にまとめる
 #   usage: open_task_window <task> [<repo>...]
+# 渡したリポに加えて、タスク配下にある他の worktree も並べる。
 claude_pane_pct=30 # 左端 claude ペインの幅(%)
+extra_col_pct=20   # リポに対応しないペインをまとめる右端の列の幅(%)
+
+# $1 が $2 以降に含まれるか
+in_list() {
+  local x="$1" y
+  shift
+  for y in "$@"; do [ "$y" = "$x" ] && return 0; done
+  return 1
+}
+
+# タスクのウィンドウを探して window_id を出力する(無ければ何も出さない)。
+#   1) taskenv が付けた印(ウィンドウオプション @taskenv_dir)で探す
+#   2) 無ければ、ウィンドウ名がタスク名で、タスクディレクトリ配下にいるペインを持つ
+#      ウィンドウを探し、印を付け直す
+# 2) が要るのは、@taskenv_* は tmux のユーザーオプションで、tmuxp の保存・復元
+# (tmux サーバーの再起動)では消えるため。復元で残るのはウィンドウ名・レイアウト・
+# 各ペインの作業ディレクトリだけなので、それで見つける。印を付ける前の版の
+# taskenv で作ったウィンドウもこれで拾える。
+#   usage: find_task_window <task> <taskdir>
+find_task_window() {
+  local task="$1" taskdir="$2" w="" id name path
+  w=$(tmux list-windows -a -F $'#{window_id}\t#{@taskenv_dir}' |
+    awk -F'\t' -v d="$taskdir" '$2 == d { print $1; exit }')
+  if [ -z "$w" ]; then
+    while IFS=$'\t' read -r id name path; do
+      [ "$name" = "$task" ] || continue
+      case "$path" in "$taskdir" | "$taskdir"/*) w="$id"; break ;; esac
+    done < <(tmux list-panes -a -F $'#{window_id}\t#{window_name}\t#{pane_current_path}')
+    [ -n "$w" ] && tmux set-option -w -t "$w" @taskenv_dir "$taskdir"
+  fi
+  printf '%s' "$w"
+}
+
+# リポのペインを target の右(-h)または下(-v)に置き、ペイン ID を出力する。
+# そのリポのペインが既にあれば join-pane で移し、無ければ split-window で作る。
+# open_task_window の local(taskdir / pane_ids / pane_repos)を参照する。
+#   usage: place_repo_pane <-h|-v> <target> <size%> <repo>
+place_repo_pane() {
+  local split="$1" target="$2" pct="$3" r="$4" id="" i
+  for i in "${!pane_repos[@]}"; do
+    [ "${pane_repos[i]}" = "$r" ] && { id="${pane_ids[i]}"; break; }
+  done
+  if [ -n "$id" ]; then
+    tmux join-pane "$split" -s "$id" -t "$target" -l "$pct%" 2>/dev/null || return 1
+  else
+    id=$(tmux split-window "$split" -t "$target" -l "$pct%" -c "$taskdir/$r" \
+      -P -F '#{pane_id}' 2>/dev/null) || return 1
+  fi
+  tmux set-option -p -t "$id" @taskenv_repo "$r" 2>/dev/null || true
+  tmux select-pane -t "$id" -T "$r" 2>/dev/null || true
+  printf '%s' "$id"
+}
 
 open_task_window() {
   local task="$1"
   shift
-  local -a repos=("$@")
   local taskdir="$project/__tasks/$task"
-  local left area rest p n cols rows rows_base rows_rem idx c j pf
+  local -a repos=() all=() pane_ids=() pane_repos=() extras=()
+  local win left="" launch_claude=0 listing id lft mark path r x d
+  local area area_pct rest p n k cols rows rows_base rows_rem idx c j pf
 
   if [ -z "${TMUX:-}" ]; then
     echo "taskenv: tmux セッション外のため new-window はスキップしました($taskdir を手動で開いてください)" >&2
@@ -259,8 +323,89 @@ open_task_window() {
     return 1
   fi
 
-  left=$(tmux new-window -P -F '#{pane_id}' -c "$taskdir" -n "$task")
-  tmux select-pane -t "$left" -T "claude" 2>/dev/null || true
+  # 並べるリポ: 引数で渡されたもの + タスク配下にある他の worktree
+  for r in "$@"; do in_list "$r" ${all[@]+"${all[@]}"} || all+=("$r"); done
+  for d in "$taskdir"/*/; do
+    [ -e "$d/.git" ] || continue # .claude/.serena 等は除く
+    r="$(basename "$d")"
+    in_list "$r" ${all[@]+"${all[@]}"} || all+=("$r")
+  done
+
+  win=$(find_task_window "$task" "$taskdir")
+  if [ -z "$win" ]; then
+    left=$(tmux new-window -P -F '#{pane_id}' -c "$taskdir" -n "$task")
+    win=$(tmux display-message -p -t "$left" '#{window_id}')
+    tmux set-option -w -t "$win" @taskenv_dir "$taskdir"
+    launch_claude=1
+  else
+    echo "taskenv: 既存のウィンドウ($win)にペインを組み直します"
+    listing=$(tmux list-panes -t "$win" \
+      -F $'#{pane_id}\t#{pane_left}\t#{?@taskenv_role,#{@taskenv_role},-}\t#{?@taskenv_repo,#{@taskenv_repo},-}\t#{pane_current_path}')
+    # 空欄は - にしてある(read の IFS がタブだと空欄が詰められて列がずれるため)
+
+    # claude のペイン: 印 → 左端でタスクディレクトリにいるペイン → タスクディレクトリにいるペイン
+    left=$(awk -F'\t' '$3 == "claude" { print $1; exit }' <<<"$listing")
+    [ -n "$left" ] || left=$(awk -F'\t' -v d="$taskdir" '$5 == d && $2 == 0 { print $1; exit }' <<<"$listing")
+    [ -n "$left" ] || left=$(awk -F'\t' -v d="$taskdir" '$5 == d { print $1; exit }' <<<"$listing")
+
+    # 残りのペインをリポに対応づける: 印 → 作業ディレクトリ(<taskdir>/<repo> とその配下)。
+    # 1 リポにつき 1 ペイン。対応しないものと 2 つ目以降は extras(右端の列)へ
+    while IFS=$'\t' read -r id lft _ mark path; do
+      [ "$id" = "$left" ] && continue
+      r=""
+      if [ "$mark" != "-" ] && in_list "$mark" ${all[@]+"${all[@]}"}; then
+        r="$mark"
+      else
+        for x in ${all[@]+"${all[@]}"}; do
+          case "$path" in "$taskdir/$x" | "$taskdir/$x"/*) r="$x"; break ;; esac
+        done
+      fi
+      if [ -n "$r" ] && ! in_list "$r" ${pane_repos[@]+"${pane_repos[@]}"}; then
+        pane_ids+=("$id")
+        pane_repos+=("$r")
+      else
+        extras+=("$id")
+      fi
+    done <<<"$listing"
+
+    if [ -z "$left" ]; then
+      # claude のペインを閉じていた場合は作り直す
+      left=$(tmux split-window -h -b -f -t "$win" -l "$claude_pane_pct%" -c "$taskdir" \
+        -P -F '#{pane_id}') || { echo "taskenv: claude のペインを作れませんでした" >&2; return 1; }
+      launch_claude=1
+    fi
+
+    # claude 以外のペインを退避する(-d: 退避先の一時ウィンドウには切り替えない。
+    # 一時ウィンドウは join-pane でペインが無くなると tmux が自動で消す)
+    for id in ${pane_ids[@]+"${pane_ids[@]}"} ${extras[@]+"${extras[@]}"}; do
+      tmux break-pane -d -s "$id"
+    done
+  fi
+  tmux set-option -w -t "$win" @taskenv_dir "$taskdir"
+  tmux set-option -p -t "$left" @taskenv_role claude 2>/dev/null || true
+
+  # 格子の並び順: 既にペインのあるリポ(元のペイン順)→ 新しく足すリポ
+  repos=(${pane_repos[@]+"${pane_repos[@]}"})
+  for r in ${all[@]+"${all[@]}"}; do
+    in_list "$r" ${repos[@]+"${repos[@]}"} || repos+=("$r")
+  done
+
+  # リポに対応しないペインは右端に 1 列にまとめる。格子より先に置いておき、
+  # 格子はその残り(claude の列との間)に作る
+  k=${#extras[@]}
+  p=""
+  for ((j = 0; j < k; j++)); do
+    if [ -z "$p" ]; then
+      tmux join-pane -h -s "${extras[j]}" -t "$left" -l "$extra_col_pct%" 2>/dev/null || break
+    else
+      tmux join-pane -v -s "${extras[j]}" -t "$p" -l "$((100 * (k - j) / (k - j + 1)))%" 2>/dev/null || break
+    fi
+    p="${extras[j]}"
+  done
+  # 右側の領域の幅(左端ペインに対する %)。右端の列があると左端ペインはウィンドウの
+  # (100 - extra_col_pct)% なので、claude の列がウィンドウの claude_pane_pct% になるよう換算する
+  area_pct=$((100 - claude_pane_pct))
+  [ -n "$p" ] && area_pct=$((100 - 100 * claude_pane_pct / (100 - extra_col_pct)))
 
   n=${#repos[@]}
   if [ "$n" -gt 0 ]; then
@@ -271,8 +416,7 @@ open_task_window() {
     rows_rem=$((n % cols))
 
     # 右側の領域を切り出す。この最初のペインが 1 列目 1 行目(= repos[0])になる
-    if ! area=$(tmux split-window -h -t "$left" -p $((100 - claude_pane_pct)) \
-      -c "$taskdir/${repos[0]}" -P -F '#{pane_id}' 2>/dev/null); then
+    if ! area=$(place_repo_pane -h "$left" "$area_pct" "${repos[0]}"); then
       echo "taskenv: ウィンドウが狭くペインを作れませんでした(手動で分割してください)" >&2
       area=""
     fi
@@ -286,24 +430,20 @@ open_task_window() {
       # 最終列以外は、残りの列のための領域を先に切り出しておく
       rest=""
       if [ $((c + 1)) -lt "$cols" ]; then
-        if ! rest=$(tmux split-window -h -t "$area" -p $((100 * (cols - c - 1) / (cols - c))) \
-          -c "$taskdir/${repos[idx + rows]}" -P -F '#{pane_id}' 2>/dev/null); then
-          echo "taskenv: ウィンドウ幅が足りず ${repos[idx + rows]} 以降のペインは作れませんでした" >&2
+        if ! rest=$(place_repo_pane -h "$area" $((100 * (cols - c - 1) / (cols - c))) "${repos[idx + rows]}"); then
+          echo "taskenv: ウィンドウ幅が足りず ${repos[idx + rows]} 以降のペインは置けませんでした" >&2
           rest=""
           cols=$((c + 1)) # 以降の列は作らない
         fi
       fi
 
       # この列を rows 個に縦分割(1 行目は area 自身)
-      tmux select-pane -t "$area" -T "${repos[idx]}" 2>/dev/null || true
       p="$area"
       for ((j = 1; j < rows; j++)); do
-        if ! p=$(tmux split-window -v -t "$p" -p $((100 * (rows - j) / (rows - j + 1))) \
-          -c "$taskdir/${repos[idx + j]}" -P -F '#{pane_id}' 2>/dev/null); then
-          echo "taskenv: ウィンドウ高が足りず ${repos[idx + j]} 以降のペインは作れませんでした" >&2
+        if ! p=$(place_repo_pane -v "$p" $((100 * (rows - j) / (rows - j + 1))) "${repos[idx + j]}"); then
+          echo "taskenv: ウィンドウ高が足りず ${repos[idx + j]} 以降のペインは置けませんでした" >&2
           break
         fi
-        tmux select-pane -t "$p" -T "${repos[idx + j]}" 2>/dev/null || true
       done
 
       idx=$((idx + rows))
@@ -311,14 +451,31 @@ open_task_window() {
     done
   fi
 
-  if [ -n "$prompt_val" ]; then
-    # プロンプトはファイル経由で claude に渡す(改行・引用符を安全に。$(cat) が読み終えたら rm)
-    pf="$taskdir/.taskenv-prompt"
-    printf '%s' "$prompt_val" > "$pf"
-    tmux send-keys -t "$left" "claude \"\$(cat '$pf'; rm -f '$pf')\"" Enter
-  else
-    tmux send-keys -t "$left" 'claude' Enter # 左ペインで claude 起動
+  # 置けなかった既存ペインは退避先の一時ウィンドウに残っている。消えてはいないことを伝える
+  for id in ${pane_ids[@]+"${pane_ids[@]}"} ${extras[@]+"${extras[@]}"}; do
+    x=$(tmux display-message -p -t "$id" '#{window_id}' 2>/dev/null || true)
+    if [ -n "$x" ] && [ "$x" != "$win" ]; then
+      echo "taskenv: ペイン $id は狭くて戻せなかったため、別ウィンドウ $x に残しています" >&2
+    fi
+  done
+
+  if [ "$launch_claude" -eq 1 ]; then
+    tmux select-pane -t "$left" -T "claude" 2>/dev/null || true
+    if [ -n "$prompt_val" ]; then
+      # プロンプトはファイル経由で claude に渡す(改行・引用符を安全に。$(cat) が読み終えたら rm)
+      pf="$taskdir/.taskenv-prompt"
+      printf '%s' "$prompt_val" > "$pf"
+      tmux send-keys -t "$left" "claude \"\$(cat '$pf'; rm -f '$pf')\"" Enter
+    else
+      tmux send-keys -t "$left" 'claude' Enter # 左ペインで claude 起動
+    fi
+  elif [ -n "$prompt_val" ]; then
+    echo "taskenv: 既存のウィンドウに足したため --prompt は使いませんでした(claude は起動し直しません)" >&2
   fi
+
+  # 別セッションのウィンドウでもそこへ移る
+  tmux select-window -t "$win"
+  tmux switch-client -t "$win" 2>/dev/null || true
   tmux select-pane -t "$left"
 }
 
@@ -367,10 +524,11 @@ if [ "${1:-}" = "--assign" ]; then
   exit 0
 fi
 
-# ---- --window: 既存タスクの tmux ウィンドウを開き直す ------------------------
+# ---- --window: 既存タスクの tmux ウィンドウを開く -----------------------------
 # セットアップが途中で失敗した場合(ウィンドウ作成まで到達しない)や、ウィンドウを
 # 閉じてしまった場合に使う。worktree は作らず、タスク配下にあるリポジトリから
-# ペインを組み直すだけ。
+# ペインを組み直すだけ。ウィンドウが残っていれば、新しく作らずにそこで組み直す
+# (tmux の再起動で復元したウィンドウ、ペインを閉じてしまったウィンドウの整え直しにも使える)。
 
 if [ "${1:-}" = "--window" ]; then
   [ $# -ge 2 ] || usage
