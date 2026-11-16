@@ -9,7 +9,7 @@ return {
         enabled = true,
       },
       async = true,
-      disabled = { "volar" },
+      disabled = { "vue_ls" },
       timeout_ms = 5000,
     },
     config = {
@@ -64,7 +64,7 @@ return {
           },
         },
       },
-      volar = {
+      vue_ls = {
         filetypes = { "vue" },
         init_options = {
           vue = {
